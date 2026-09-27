@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Passenger Help & Support Centre — BharatRail</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Header -->
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="index.html" class="brand-link">
+        <div class="brand-logo-icon">
+          <i data-lucide="train" style="width:20px;height:20px;"></i>
+        </div>
+        <div>
+          <span class="brand-title">Bharat<span>Rail</span></span>
+          <span class="brand-badge">Help</span>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">Book Trains</a>
+        <a href="pnr.html" class="nav-link">PNR Status</a>
+        <a href="trains.html" class="nav-link">Train Schedule</a>
+        <a href="live-status.html" class="nav-link">Live Status</a>
+        <a href="refunds.html" class="nav-link">Cancel & Refunds</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="login.html" class="btn-signin">
+          <i data-lucide="user" style="width:14px;height:14px;"></i>
+          <span>Sign In</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="content-section">
+    <div class="container" style="max-width:860px;">
+      
+      <!-- Banner -->
+      <div class="card" style="padding:24px;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div class="brand-logo-icon" style="width:44px; height:44px;">
+            <i data-lucide="help-circle" style="width:24px;height:24px;"></i>
+          </div>
+          <div>
+            <h1 style="font-size:1.4rem; font-weight:800;">Passenger Help & Support Centre</h1>
+            <p style="font-size:12px; color:var(--ink-muted); margin-top:2px;">
+              24x7 National emergency assistance, grievance redressal, and quota guidelines.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 Key Emergency Helplines -->
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:24px;">
+        <div class="card" style="text-align:center; padding:20px;">
+          <div class="action-icon" style="margin:0 auto 10px;">
+            <i data-lucide="phone-call" style="width:22px;height:22px;"></i>
+          </div>
+          <h3 style="font-size:14px; font-weight:800;">Railway Helpline 139</h3>
+          <p style="font-size:11px; color:var(--ink-muted); margin-top:4px;">24x7 national customer enquiry & assistance toll-free.</p>
+        </div>
+
+        <div class="card" style="text-align:center; padding:20px;">
+          <div class="action-icon" style="margin:0 auto 10px; background:var(--status-avl-bg); color:var(--status-avl-text);">
+            <i data-lucide="shield-alert" style="width:22px;height:22px;"></i>
+          </div>
+          <h3 style="font-size:14px; font-weight:800;">Security Helpline 182</h3>
+          <p style="font-size:11px; color:var(--ink-muted); margin-top:4px;">Railway Protection Force (RPF) onboard emergency helpline.</p>
+        </div>
+
+        <div class="card" style="text-align:center; padding:20px;">
+          <div class="action-icon" style="margin:0 auto 10px; background:var(--canvas-subtle); color:var(--ink);">
+            <i data-lucide="file-text" style="width:22px;height:22px;"></i>
+          </div>
+          <h3 style="font-size:14px; font-weight:800;">RailMadad Portal</h3>
+          <p style="font-size:11px; color:var(--ink-muted); margin-top:4px;">Integrated online passenger grievance tracking system.</p>
+        </div>
+      </div>
+
+      <!-- FAQs -->
+      <div class="card">
+        <h3 style="font-size:14px; font-weight:800; text-transform:uppercase; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:16px;">
+          Frequently Asked Questions
+        </h3>
+
+        <div style="display:flex; flex-direction:column; gap:16px; font-size:13px; color:var(--ink-secondary);">
+          <div>
+            <strong style="color:var(--ink); font-size:14px;">Q: What is the difference between GNWL, RLWL, and PQWL?</strong>
+            <p style="margin-top:4px; line-height:1.6;">
+              <strong>GNWL (General Waitlist):</strong> Highest confirmation probability. Assigned for journeys originating from the train’s primary source station.<br>
+              <strong>RLWL (Remote Location Waitlist):</strong> Assigned for journeys between intermediate major stations.<br>
+              <strong>PQWL (Pooled Quota Waitlist):</strong> Shared across several intermediate stations that pool a smaller reservation quota.
+            </p>
+          </div>
+
+          <div style="border-top:1px solid var(--canvas-subtle); padding-top:14px;">
+            <strong style="color:var(--ink); font-size:14px;">Q: When does Tatkal reservation open?</strong>
+            <p style="margin-top:4px; line-height:1.6;">
+              Tatkal booking opens 1 day prior to the train’s departure date: <strong>10:00 AM IST</strong> for AC classes (1A, 2A, 3A, 3E, CC, EC) and <strong>11:00 AM IST</strong> for Non-AC classes (SL, 2S).
+            </p>
+          </div>
+
+          <div style="border-top:1px solid var(--canvas-subtle); padding-top:14px;">
+            <strong style="color:var(--ink); font-size:14px;">Q: What is the Single Availability Guarantee on BharatRail?</strong>
+            <p style="margin-top:4px; line-height:1.6;">
+              Every reservation enquiry strictly returns one unambiguous, authoritative state (e.g. AVAILABLE 31, RAC 6, or GNWL 14). Contradictory states like RAC + GNWL or CONFIRMED + WAITLIST are architecturally prohibited.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modern Quiet Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none; padding:0;">
+        <span>© 2026 BharatRail. Official Passenger Help & Support Centre.</span>
+        <a href="index.html" style="color:var(--primary); font-weight:600;">Return to Booking</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

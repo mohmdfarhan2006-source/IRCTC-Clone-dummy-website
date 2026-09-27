@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cancellation Rules & Refund Tariffs — BharatRail</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Header -->
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="index.html" class="brand-link">
+        <div class="brand-logo-icon">
+          <i data-lucide="train" style="width:20px;height:20px;"></i>
+        </div>
+        <div>
+          <span class="brand-title">Bharat<span>Rail</span></span>
+          <span class="brand-badge">Refunds</span>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">Book Trains</a>
+        <a href="pnr.html" class="nav-link">PNR Status</a>
+        <a href="trains.html" class="nav-link">Train Schedule</a>
+        <a href="live-status.html" class="nav-link">Live Status</a>
+        <a href="refunds.html" class="nav-link active">Cancel & Refunds</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="login.html" class="btn-signin">
+          <i data-lucide="user" style="width:14px;height:14px;"></i>
+          <span>Sign In</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="content-section">
+    <div class="container" style="max-width:860px;">
+      
+      <!-- Banner -->
+      <div class="card" style="padding:24px;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div class="brand-logo-icon" style="width:44px; height:44px;">
+            <i data-lucide="shield-check" style="width:24px;height:24px;"></i>
+          </div>
+          <div>
+            <h1 style="font-size:1.4rem; font-weight:800;">Official Ticket Cancellation & Refund Tariffs</h1>
+            <p style="font-size:12px; color:var(--ink-muted); margin-top:2px;">
+              Statutory refund rules governed by the Ministry of Railways, Government of India.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Cancel PNR Action -->
+      <div class="card" style="padding:20px;">
+        <h3 style="font-size:13px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">Instant PNR Ticket Cancellation</h3>
+        <p style="font-size:12px; color:var(--ink-muted); margin-bottom:12px;">
+          To cancel an existing reservation and receive an instant refund credited to your source payment account, enter your PNR below:
+        </p>
+        <form action="pnr.html" method="GET" style="display:flex; gap:10px; max-width:500px;">
+          <div class="search-input-wrap" style="flex:1;">
+            <span class="search-input-icon"><i data-lucide="hash" style="width:14px;height:14px;"></i></span>
+            <input type="text" name="pnr" placeholder="Enter 10-digit PNR" value="824-3197430" required>
+          </div>
+          <button type="submit" class="btn-search" style="margin:0; padding:10px 20px;">
+            <span>Review & Cancel</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Statutory Refund Tariffs Table -->
+      <div class="card">
+        <h3 style="font-size:14px; font-weight:800; text-transform:uppercase; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:14px;">
+          Flat Cancellation Charge Matrix (More than 48 Hours Before Scheduled Departure)
+        </h3>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Class of Reservation</th>
+                <th>Standard Flat Deduction</th>
+                <th>GST Rate</th>
+                <th>Net Deducted Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:700;">AC First Class / Executive (1A / EC)</td>
+                <td class="mono font-bold">₹240</td>
+                <td>5%</td>
+                <td class="mono font-bold" style="color:var(--status-reg-text);">₹252 / passenger</td>
+              </tr>
+              <tr>
+                <td style="font-weight:700;">AC 2 Tier (2A)</td>
+                <td class="mono font-bold">₹200</td>
+                <td>5%</td>
+                <td class="mono font-bold" style="color:var(--status-reg-text);">₹210 / passenger</td>
+              </tr>
+              <tr>
+                <td style="font-weight:700;">AC 3 Tier / Chair Car (3A / 3E / CC)</td>
+                <td class="mono font-bold">₹180</td>
+                <td>5%</td>
+                <td class="mono font-bold" style="color:var(--status-reg-text);">₹189 / passenger</td>
+              </tr>
+              <tr>
+                <td style="font-weight:700;">Sleeper Class (SL)</td>
+                <td class="mono font-bold">₹120</td>
+                <td>Nil</td>
+                <td class="mono font-bold" style="color:var(--status-reg-text);">₹120 / passenger</td>
+              </tr>
+              <tr>
+                <td style="font-weight:700;">Second Class (2S)</td>
+                <td class="mono font-bold">₹60</td>
+                <td>Nil</td>
+                <td class="mono font-bold" style="color:var(--status-reg-text);">₹60 / passenger</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Time Window Slabs -->
+      <div class="card">
+        <h3 style="font-size:14px; font-weight:800; text-transform:uppercase; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:14px;">
+          Cancellation Time Windows & Deduction Slabs
+        </h3>
+
+        <div style="display:flex; flex-direction:column; gap:14px; font-size:13px; color:var(--ink-secondary);">
+          <div style="background:var(--canvas-subtle); padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
+            <strong style="color:var(--ink);">Between 48 hours and 12 hours before scheduled departure:</strong>
+            <p style="margin-top:2px;">Cancellation charge is <strong>25% of the total fare</strong> (subject to the minimum flat class charge above).</p>
+          </div>
+
+          <div style="background:var(--canvas-subtle); padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
+            <strong style="color:var(--ink);">Between 12 hours and up to 4 hours before scheduled departure:</strong>
+            <p style="margin-top:2px;">Cancellation charge is <strong>50% of the total fare</strong> (subject to the minimum flat class charge).</p>
+          </div>
+
+          <div style="background:var(--canvas-subtle); padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
+            <strong style="color:var(--status-reg-text);">Less than 4 hours before departure or after chart preparation:</strong>
+            <p style="margin-top:2px;"><strong>No refund is admissible</strong> on confirmed tickets once reservation charts are prepared.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modern Quiet Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none; padding:0;">
+        <span>© 2026 BharatRail. Official Passenger Tariffs.</span>
+        <a href="help.html" style="color:var(--primary); font-weight:600;">24x7 RailMadad Assistance</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

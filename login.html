@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — BharatRail</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh;">
+
+  <div class="container" style="max-width:440px; padding:30px 16px;">
+    
+    <div class="card" style="padding:32px;">
+      
+      <!-- Brand Logo Header -->
+      <div style="text-align:center; margin-bottom:24px;">
+        <div class="brand-logo-icon" style="width:48px; height:48px; margin:0 auto 12px;">
+          <i data-lucide="train" style="width:26px;height:26px;"></i>
+        </div>
+        <h1 class="brand-title" style="font-size:1.4rem;">Bharat<span>Rail</span></h1>
+        <p style="font-size:12px; color:var(--ink-muted); margin-top:2px;">
+          Indian Railway Passenger Reservation Sign In
+        </p>
+      </div>
+
+      <form onsubmit="handleDemoLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Email or Mobile Number</label>
+          <input type="email" id="loginEmail" class="form-control" value="passenger@bharatrail.in" required>
+        </div>
+
+        <div class="form-group">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <label class="form-label" style="margin:0;">Password</label>
+            <a href="help.html" style="font-size:11px; color:var(--primary); font-weight:600;">Forgot?</a>
+          </div>
+          <input type="password" id="loginPassword" class="form-control" value="Passenger@123" required>
+        </div>
+
+        <button type="submit" class="btn-search" style="width:100%; margin-top:10px; padding:12px;">
+          <span>Sign In</span>
+          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+        </button>
+      </form>
+
+      <!-- Quick Demo Account Pills -->
+      <div style="background:var(--canvas-subtle); border:1px solid var(--border); border-radius:var(--radius-md); padding:14px; margin-top:20px; font-size:11px;">
+        <strong style="color:var(--ink); display:block; margin-bottom:6px; text-transform:uppercase;">Quick-Fill Demo Accounts:</strong>
+        <div style="display:flex; gap:6px;">
+          <button type="button" onclick="fillAccount('passenger@bharatrail.in', 'Passenger@123')" class="btn-signin" style="padding:4px 8px; font-size:11px;">
+            Passenger
+          </button>
+          <button type="button" onclick="fillAccount('admin@bharatrail.gov.in', 'Admin@12345')" class="btn-signin" style="padding:4px 8px; font-size:11px; color:var(--primary);">
+            Admin
+          </button>
+        </div>
+      </div>
+
+      <div style="text-align:center; font-size:12px; color:var(--ink-muted); margin-top:20px;">
+        Don't have a railway account? 
+        <a href="register.html" style="color:var(--primary); font-weight:700;">Register New User</a>
+      </div>
+
+    </div>
+
+    <div style="text-align:center; margin-top:16px; font-size:11px; color:var(--ink-muted);">
+      <a href="index.html" style="color:var(--ink-secondary); font-weight:600;">← Back to Home</a>
+    </div>
+
+  </div>
+
+  <script>
+    function fillAccount(email, pass) {
+      document.getElementById('loginEmail').value = email;
+      document.getElementById('loginPassword').value = pass;
+    }
+    function handleDemoLogin(e) {
+      e.preventDefault();
+      alert('Login successful! Welcome to BharatRail.');
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

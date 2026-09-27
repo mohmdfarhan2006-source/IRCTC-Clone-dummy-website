@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PNR Enquiry & Status — BharatRail</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Header -->
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="index.html" class="brand-link">
+        <div class="brand-logo-icon">
+          <i data-lucide="train" style="width:20px;height:20px;"></i>
+        </div>
+        <div>
+          <span class="brand-title">Bharat<span>Rail</span></span>
+          <span class="brand-badge">PNR</span>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">Book Trains</a>
+        <a href="pnr.html" class="nav-link active">PNR Status</a>
+        <a href="trains.html" class="nav-link">Train Schedule</a>
+        <a href="live-status.html" class="nav-link">Live Status</a>
+        <a href="refunds.html" class="nav-link">Cancel & Refunds</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="login.html" class="btn-signin">
+          <i data-lucide="user" style="width:14px;height:14px;"></i>
+          <span>Sign In</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="content-section">
+    <div class="container" style="max-width:760px;">
+      
+      <!-- PNR Enquiry Card -->
+      <div class="card">
+        <div style="text-align:center; max-width:440px; margin:0 auto 20px;">
+          <div class="brand-logo-icon" style="margin:0 auto 12px; width:44px; height:44px;">
+            <i data-lucide="file-check" style="width:24px;height:24px;"></i>
+          </div>
+          <h1 style="font-size:1.4rem; font-weight:800; letter-spacing:-0.02em;">Live PNR Status Enquiry</h1>
+          <p style="font-size:12px; color:var(--ink-muted); margin-top:4px;">
+            Enter your 10-digit Passenger Name Record (PNR) number to inspect real-time charting status and berth allocation.
+          </p>
+        </div>
+
+        <form id="pnrSearchForm" style="display:flex; gap:10px; margin-bottom:14px;">
+          <div class="search-input-wrap" style="flex:1;">
+            <span class="search-input-icon"><i data-lucide="hash" style="width:14px;height:14px;"></i></span>
+            <input type="text" id="pnrInput" placeholder="Enter 10-digit PNR (e.g. 8243197430)" value="824-3197430" class="mono" style="font-size:1rem; font-weight:700;" required>
+          </div>
+          <button type="submit" class="btn-search" style="margin:0; padding:10px 24px;">
+            <i data-lucide="search" style="width:16px;height:16px;"></i>
+            <span>Get Status</span>
+          </button>
+        </form>
+
+        <!-- Sample PNRs -->
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:11px; color:var(--ink-muted);">
+          <span>Quick Demo PNRs:</span>
+          <button type="button" onclick="querySamplePNR('824-3197430')" class="btn-signin" style="padding:3px 8px; font-size:11px;">
+            824-3197430 (Magadh Express)
+          </button>
+          <button type="button" onclick="querySamplePNR('451-9283710')" class="btn-signin" style="padding:3px 8px; font-size:11px;">
+            451-9283710 (Vande Bharat)
+          </button>
+        </div>
+      </div>
+
+      <!-- Result Card Container -->
+      <div id="pnrResultSection" style="display:none;">
+        <!-- Populated dynamically by app.js -->
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modern Quiet Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none; padding:0;">
+        <span>© 2026 BharatRail. Official Passenger Reservation Terminal.</span>
+        <a href="help.html" style="color:var(--primary); font-weight:600;">24x7 RailMadad Assistance (139)</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

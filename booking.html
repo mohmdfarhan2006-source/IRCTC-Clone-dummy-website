@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Passenger Checkout — BharatRail</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Header -->
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="index.html" class="brand-link">
+        <div class="brand-logo-icon">
+          <i data-lucide="train" style="width:20px;height:20px;"></i>
+        </div>
+        <div>
+          <span class="brand-title">Bharat<span>Rail</span></span>
+          <span class="brand-badge">Checkout</span>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <div style="font-size:12px; font-weight:700; color:var(--ink-secondary); display:flex; align-items:center; gap:6px;">
+          <i data-lucide="shield-check" style="width:16px;height:16px; color:var(--status-avl-text);"></i>
+          <span>PCI-DSS 256-Bit Encrypted</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content-section">
+    <div class="container">
+      
+      <!-- Progress Stepper Bar -->
+      <div class="stepper-bar">
+        <div class="stepper-track">
+          <div class="step-node">
+            <div class="step-circle completed">✓</div>
+            <span class="step-label">1. Search</span>
+          </div>
+          <div class="step-line completed"></div>
+          <div class="step-node">
+            <div class="step-circle active">2</div>
+            <span class="step-label active">2. Passengers</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-node">
+            <div class="step-circle">3</div>
+            <span class="step-label">3. Payment</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-node">
+            <div class="step-circle">4</div>
+            <span class="step-label">4. ERS Ticket</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Train Summary Banner -->
+      <div class="card" style="padding:16px 22px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div>
+          <span style="font-family:var(--font-mono); font-size:11px; font-weight:700; background:var(--primary-tint); color:var(--primary); padding:3px 8px; border-radius:var(--radius-sm); border:1px solid var(--primary-border);" id="bookingSummaryTrain">
+            Train #12402 - Magadh Express
+          </span>
+          <h2 style="font-size:1.1rem; font-weight:800; margin-top:6px;" id="bookingSummaryRoute">
+            NDLS → ARA • 2026-09-28 • Class: 3A
+          </h2>
+        </div>
+        <div>
+          <span class="avl-status-tag available" style="font-size:11px; padding:6px 12px;">
+            AVAILABLE 31
+          </span>
+        </div>
+      </div>
+
+      <!-- Two-Column Checkout Layout -->
+      <form id="bookingForm" class="checkout-grid">
+        
+        <!-- Left: Passenger Form & Payment Gateway -->
+        <div>
+          
+          <!-- Passenger Details Card -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">
+                <i data-lucide="users" style="width:18px;height:18px; color:var(--primary);"></i>
+                <span>Passenger Information <span id="paxCountLabel" style="color:var(--ink-muted); font-size:12px;">(1/6)</span></span>
+              </span>
+              <button type="button" id="btnAddPassenger" class="btn-add-pax">
+                <i data-lucide="plus" style="width:14px;height:14px;"></i>
+                <span>Add Passenger</span>
+              </button>
+            </div>
+
+            <div id="passengersContainer">
+              <!-- Dynamically populated by app.js -->
+            </div>
+          </div>
+
+          <!-- Contact Information Card -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">
+                <i data-lucide="smartphone" style="width:18px;height:18px; color:var(--primary);"></i>
+                <span>Ticket Contact Details</span>
+              </span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+              <div class="form-group">
+                <label class="form-label">Mobile Number (SMS Ticket) *</label>
+                <input type="tel" class="form-control" value="9876543210" placeholder="10-digit mobile number" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email Address (PDF ERS) *</label>
+                <input type="email" class="form-control" value="passenger@indianrail.in" placeholder="email@example.com" required>
+              </div>
+            </div>
+
+            <!-- Options -->
+            <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--ink);">
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" checked accent-color="var(--primary)">
+                <span>Consider for <strong>Free Auto-Upgradation</strong> to higher AC class if berths available.</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" id="optInsurance" checked accent-color="var(--primary)">
+                <span>Opt for Official Travel Insurance (₹0.45/passenger - coverage up to ₹10 Lakhs).</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Payment Gateway Selection Card -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">
+                <i data-lucide="lock" style="width:18px;height:18px; color:var(--status-avl-text);"></i>
+                <span>Select Payment Gateway</span>
+              </span>
+              <span style="font-size:11px; color:var(--status-avl-text); font-weight:700;">Instant GNWL Refund</span>
+            </div>
+
+            <!-- Tabs -->
+            <div class="payment-tabs-grid">
+              <button type="button" class="pay-tab-btn active" data-tab="upi">
+                <i data-lucide="qr-code" style="width:18px;height:18px;"></i>
+                <span>UPI / QR</span>
+              </button>
+              <button type="button" class="pay-tab-btn" data-tab="card">
+                <i data-lucide="credit-card" style="width:18px;height:18px;"></i>
+                <span>Cards</span>
+              </button>
+              <button type="button" class="pay-tab-btn" data-tab="netbanking">
+                <i data-lucide="building" style="width:18px;height:18px;"></i>
+                <span>Net Banking</span>
+              </button>
+              <button type="button" class="pay-tab-btn" data-tab="wallet">
+                <i data-lucide="wallet" style="width:18px;height:18px;"></i>
+                <span>Wallets</span>
+              </button>
+            </div>
+
+            <!-- Tab Content: UPI -->
+            <div id="tab-content-upi" class="payment-tab-content">
+              <div class="qr-box">
+                <div class="qr-graphic">
+                  <i data-lucide="qr-code" style="width:48px;height:48px; color:var(--ink);"></i>
+                </div>
+                <div>
+                  <h4 style="font-size:13px; font-weight:700; color:var(--ink);">Scan with any UPI Application</h4>
+                  <p style="font-size:11px; color:var(--ink-muted); margin-top:2px;">GPay, PhonePe, Paytm, BHIM</p>
+                  <span class="avl-status-tag available" style="margin-top:6px;">Zero Convenience Fee</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Or Enter Virtual Payment Address (VPA / UPI ID)</label>
+                <input type="text" class="form-control" value="passenger@okhdfcbank" placeholder="username@okhdfcbank">
+              </div>
+            </div>
+
+            <!-- Tab Content: Card -->
+            <div id="tab-content-card" class="payment-tab-content" style="display:none;">
+              <div class="form-group">
+                <label class="form-label">Card Number</label>
+                <input type="text" class="form-control mono" placeholder="4532 •••• •••• 8921" value="4532 8920 1192 8412">
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div class="form-group">
+                  <label class="form-label">Expiry Date</label>
+                  <input type="text" class="form-control mono" placeholder="MM/YY" value="08/28">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">CVV</label>
+                  <input type="password" maxlength="4" class="form-control mono" placeholder="•••" value="829">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Cardholder Name</label>
+                <input type="text" class="form-control" placeholder="Name printed on card" value="Rohit Sharma">
+              </div>
+            </div>
+
+            <!-- Tab Content: Net Banking -->
+            <div id="tab-content-netbanking" class="payment-tab-content" style="display:none;">
+              <div class="form-group">
+                <label class="form-label">Select Authoritative Net Banking Partner</label>
+                <select class="form-control">
+                  <option selected>State Bank of India (SBI)</option>
+                  <option>HDFC Bank</option>
+                  <option>ICICI Bank</option>
+                  <option>Punjab National Bank</option>
+                  <option>Bank of Baroda</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Tab Content: Wallet -->
+            <div id="tab-content-wallet" class="payment-tab-content" style="display:none;">
+              <div class="form-group">
+                <label class="form-label">Select Digital Wallet</label>
+                <select class="form-control">
+                  <option selected>Paytm Wallet</option>
+                  <option>PhonePe Wallet</option>
+                  <option>Amazon Pay Balance</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Submit Pay Button -->
+            <button type="submit" id="btnConfirmPay" class="btn-search" style="width:100%; margin-top:14px; padding:14px; font-size:0.95rem;">
+              <i data-lucide="lock" style="width:18px;height:18px;"></i>
+              <span>Pay & Confirm Ticket <span id="payBtnAmount">(₹1387)</span></span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Right: Sticky Fare Summary -->
+        <aside class="fare-summary-sticky">
+          <div class="card">
+            <h3 style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink); border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:12px;">
+              Journey Fare Summary
+            </h3>
+
+            <div class="fare-row">
+              <span>Base Fare</span>
+              <strong id="fareBaseTotal">₹1,320</strong>
+            </div>
+
+            <div class="fare-row">
+              <span>Reservation Charge</span>
+              <strong>₹40</strong>
+            </div>
+
+            <div class="fare-row">
+              <span>Superfast Surcharge</span>
+              <strong>₹45</strong>
+            </div>
+
+            <div class="fare-row">
+              <span>Goods & Services Tax (GST 5%)</span>
+              <strong id="fareGst">₹66</strong>
+            </div>
+
+            <div class="fare-row">
+              <span>Travel Insurance</span>
+              <strong id="fareInsurance">₹0.45</strong>
+            </div>
+
+            <div class="fare-total-box">
+              <span>Total Payable</span>
+              <span class="total-amount" id="fareGrandTotal">₹1,471</span>
+            </div>
+
+            <div class="trust-badge-row">
+              <i data-lucide="shield-check" style="width:14px;height:14px; color:var(--status-avl-text);"></i>
+              <span>Instant Full Refund on GNWL Cancellation</span>
+            </div>
+
+            <div class="trust-badge-row">
+              <i data-lucide="lock" style="width:14px;height:14px; color:var(--primary);"></i>
+              <span>256-Bit SSL Direct Bank Encryption</span>
+            </div>
+          </div>
+        </aside>
+
+      </form>
+
+    </div>
+  </main>
+
+  <!-- Modern Quiet Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none; padding:0;">
+        <span>© 2026 BharatRail. Official Passenger Reservation Terminal.</span>
+        <a href="help.html" style="color:var(--primary); font-weight:600;">Railway Helpline: 139</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

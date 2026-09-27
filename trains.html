@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Train Schedule & Directory — BharatRail</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Header -->
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="index.html" class="brand-link">
+        <div class="brand-logo-icon">
+          <i data-lucide="train" style="width:20px;height:20px;"></i>
+        </div>
+        <div>
+          <span class="brand-title">Bharat<span>Rail</span></span>
+          <span class="brand-badge">Timetable</span>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">Book Trains</a>
+        <a href="pnr.html" class="nav-link">PNR Status</a>
+        <a href="trains.html" class="nav-link active">Train Schedule</a>
+        <a href="live-status.html" class="nav-link">Live Status</a>
+        <a href="refunds.html" class="nav-link">Cancel & Refunds</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="login.html" class="btn-signin">
+          <i data-lucide="user" style="width:14px;height:14px;"></i>
+          <span>Sign In</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="content-section">
+    <div class="container" style="max-width:960px;">
+      
+      <!-- Search Train Input -->
+      <div class="card" style="padding:20px;">
+        <h1 style="font-size:1.3rem; font-weight:800; margin-bottom:12px;">Authoritative Train Schedule & Route Directory</h1>
+        <form id="trainQueryForm" style="display:flex; gap:10px;">
+          <div class="search-input-wrap" style="flex:1;">
+            <span class="search-input-icon"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
+            <input type="text" id="trainSearchInput" placeholder="Enter Train Number (e.g. 22436, 12402, 12952) or Name..." value="22436" required>
+          </div>
+          <button type="submit" class="btn-search" style="margin:0; padding:10px 24px;">
+            <span>Search Schedule</span>
+          </button>
+        </form>
+
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:11px; color:var(--ink-muted); margin-top:12px;">
+          <span>Sample Premier Trains:</span>
+          <a href="trains.html?q=22436" class="btn-signin" style="padding:3px 8px; font-size:11px;">22436 - Vande Bharat</a>
+          <a href="trains.html?q=12402" class="btn-signin" style="padding:3px 8px; font-size:11px;">12402 - Magadh Express</a>
+          <a href="trains.html?q=12952" class="btn-signin" style="padding:3px 8px; font-size:11px;">12952 - Mumbai Rajdhani</a>
+        </div>
+      </div>
+
+      <!-- Train Detail Section with 5 Tabs -->
+      <div class="card" id="trainDetailSection" style="padding:0; overflow:hidden;">
+        
+        <!-- Header Banner -->
+        <div style="padding:22px; background:var(--canvas-subtle); border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+          <div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="train-number-badge" id="dtNumber" style="font-size:13px;">22436</span>
+              <h2 style="font-size:1.4rem; font-weight:800;" id="dtName">Vande Bharat Express</h2>
+              <span class="train-type-pill" id="dtType">VANDE BHARAT</span>
+            </div>
+            <p style="font-size:12px; color:var(--ink-secondary); margin-top:4px;" id="dtRoute">
+              NDLS → BSB • 759 km
+            </p>
+          </div>
+
+          <div>
+            <a href="search.html?from=NDLS&to=BSB" class="btn-search" style="margin:0; padding:9px 18px;">
+              <span>Book This Train</span>
+              <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- 5 Interactive Working Tabs -->
+        <div style="padding:0 22px;">
+          <div class="tabs-nav">
+            <button type="button" class="tab-btn active" data-tab="overview">Overview</button>
+            <button type="button" class="tab-btn" data-tab="schedule">Schedule & Route</button>
+            <button type="button" class="tab-btn" data-tab="availability">Seat Availability</button>
+            <button type="button" class="tab-btn" data-tab="classes">Classes & Layout</button>
+            <button type="button" class="tab-btn" data-tab="fare">Fare Structure</button>
+          </div>
+        </div>
+
+        <!-- Tab 1: Overview -->
+        <div id="tab-pane-overview" class="tab-pane active" style="padding:22px;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:14px; margin-bottom:20px;">
+            <div style="background:var(--canvas-subtle); padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
+              <span style="font-size:10px; font-weight:700; text-transform:uppercase; color:var(--ink-muted);">Total Distance</span>
+              <div class="mono" style="font-size:1.3rem; font-weight:800; color:var(--ink); margin-top:4px;">759 km</div>
+            </div>
+            <div style="background:var(--canvas-subtle); padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
+              <span style="font-size:10px; font-weight:700; text-transform:uppercase; color:var(--ink-muted);">Intermediate Halts</span>
+              <div class="mono" style="font-size:1.3rem; font-weight:800; color:var(--ink); margin-top:4px;">4 Stations</div>
+            </div>
+            <div style="background:var(--canvas-subtle); padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
+              <span style="font-size:10px; font-weight:700; text-transform:uppercase; color:var(--ink-muted);">Pantry & Catering</span>
+              <div style="font-size:1rem; font-weight:800; color:var(--status-avl-text); margin-top:4px;">Available Onboard</div>
+            </div>
+          </div>
+
+          <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-md); padding:16px;">
+            <h4 style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--ink-muted); margin-bottom:8px;">
+              Technical Specifications
+            </h4>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:12px; font-size:12px;">
+              <div><span style="color:var(--ink-muted)">Rake Type:</span> <strong>LHB Semi-High Speed</strong></div>
+              <div><span style="color:var(--ink-muted)">Operating Zone:</span> <strong>Northern Railway (NR)</strong></div>
+              <div><span style="color:var(--ink-muted)">Average Speed:</span> <strong>95 km/h</strong></div>
+              <div><span style="color:var(--ink-muted)">Max Permissible:</span> <strong>160 km/h</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Schedule & Route Timeline -->
+        <div id="tab-pane-schedule" class="tab-pane" style="padding:22px;">
+          <h4 style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--ink); margin-bottom:16px;">
+            Station Stoppages & Halts
+          </h4>
+          <div class="stoppage-timeline" id="dtTimeline">
+            <!-- Rendered by app.js -->
+          </div>
+
+          <div class="table-wrap" style="margin-top:24px;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Station Name</th>
+                  <th>Code</th>
+                  <th>Arrival</th>
+                  <th>Departure</th>
+                  <th>Halt</th>
+                  <th>Distance</th>
+                  <th>Day</th>
+                </tr>
+              </thead>
+              <tbody id="dtStopsTableBody">
+                <!-- Rendered by app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 3: Seat Availability -->
+        <div id="tab-pane-availability" class="tab-pane" style="padding:22px;">
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:14px;">
+            <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-md); padding:16px;">
+              <span style="font-weight:800; font-size:14px;">AC Chair Car (CC)</span>
+              <div style="margin-top:8px;">
+                <span class="avl-status-tag available" style="font-size:12px;">AVAILABLE 42</span>
+              </div>
+            </div>
+            <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-md); padding:16px;">
+              <span style="font-weight:800; font-size:14px;">Exec. Chair Car (EC)</span>
+              <div style="margin-top:8px;">
+                <span class="avl-status-tag available" style="font-size:12px;">AVAILABLE 12</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Classes & Layout -->
+        <div id="tab-pane-classes" class="tab-pane" style="padding:22px; font-size:13px; color:var(--ink-secondary);">
+          <div style="margin-bottom:14px;">
+            <strong style="color:var(--ink);">CC - AC Chair Car:</strong> 3x2 ergonomic seating with panoramic sealed windows, automatic sliding doors, onboard Wi-Fi infotainment, and aircraft-style folding tables.
+          </div>
+          <div>
+            <strong style="color:var(--ink);">EC - Executive Chair Car:</strong> 2x2 spacious 180° rotatable seats with generous legroom, premium catering, personalized reading lights, and dedicated washrooms.
+          </div>
+        </div>
+
+        <!-- Tab 5: Fare Structure -->
+        <div id="tab-pane-fare" class="tab-pane" style="padding:22px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Class</th>
+                <th>Base Fare</th>
+                <th>Reservation</th>
+                <th>Superfast</th>
+                <th>GST (5%)</th>
+                <th>Total Fare</th>
+              </tr>
+            </thead>
+            <tbody class="mono">
+              <tr>
+                <td style="font-family:var(--font-sans); font-weight:700;">CC - Chair Car</td>
+                <td>₹1,440</td>
+                <td>₹40</td>
+                <td>₹45</td>
+                <td>₹75</td>
+                <td style="font-weight:800; color:var(--primary);">₹1,750</td>
+              </tr>
+              <tr>
+                <td style="font-family:var(--font-sans); font-weight:700;">EC - Executive</td>
+                <td>₹2,850</td>
+                <td>₹60</td>
+                <td>₹75</td>
+                <td>₹150</td>
+                <td style="font-weight:800; color:var(--primary);">₹3,300</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modern Quiet Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none; padding:0;">
+        <span>© 2026 BharatRail. Official Passenger Timetable.</span>
+        <a href="help.html" style="color:var(--primary); font-weight:600;">24x7 RailMadad Assistance</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

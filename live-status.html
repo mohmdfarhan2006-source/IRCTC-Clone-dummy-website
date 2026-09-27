@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Train Running Status — BharatRail</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Header -->
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="index.html" class="brand-link">
+        <div class="brand-logo-icon">
+          <i data-lucide="train" style="width:20px;height:20px;"></i>
+        </div>
+        <div>
+          <span class="brand-title">Bharat<span>Rail</span></span>
+          <span class="brand-badge">NTES Live</span>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">Book Trains</a>
+        <a href="pnr.html" class="nav-link">PNR Status</a>
+        <a href="trains.html" class="nav-link">Train Schedule</a>
+        <a href="live-status.html" class="nav-link active">Live Status</a>
+        <a href="refunds.html" class="nav-link">Cancel & Refunds</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="login.html" class="btn-signin">
+          <i data-lucide="user" style="width:14px;height:14px;"></i>
+          <span>Sign In</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="content-section">
+    <div class="container" style="max-width:760px;">
+      
+      <!-- Query Box -->
+      <div class="card">
+        <div style="text-align:center; max-width:440px; margin:0 auto 20px;">
+          <div class="brand-logo-icon" style="margin:0 auto 12px; width:44px; height:44px;">
+            <i data-lucide="navigation" style="width:24px;height:24px;"></i>
+          </div>
+          <h1 style="font-size:1.4rem; font-weight:800;">Real-Time Train Running Status</h1>
+          <p style="font-size:12px; color:var(--ink-muted); margin-top:4px;">
+            Track live train GPS position, delay duration, and expected arrival platforms across the national railway network.
+          </p>
+        </div>
+
+        <form id="liveStatusForm" style="display:flex; gap:10px;">
+          <div class="search-input-wrap" style="flex:1;">
+            <span class="search-input-icon"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
+            <input type="text" id="liveTrainInput" placeholder="Enter Train Number (e.g. 12402, 22436)" value="12402 - Magadh Express" required>
+          </div>
+          <button type="submit" class="btn-search" style="margin:0; padding:10px 24px;">
+            <span>Track Train</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Live Results Timeline -->
+      <div id="liveStatusResult" class="card" style="padding:22px;">
+        <div class="card-header">
+          <div>
+            <span class="train-number-badge">12402</span>
+            <h3 style="font-size:1.15rem; font-weight:800; display:inline-block; margin-left:8px;">Magadh Express</h3>
+            <p style="font-size:11px; color:var(--ink-muted); margin-top:4px;">NDLS → ARA • Updated 2 mins ago via NTES GPS</p>
+          </div>
+          <div style="text-align:right;">
+            <span class="avl-status-tag available" style="font-size:12px;">Right Time (On Schedule)</span>
+            <div style="font-size:11px; color:var(--ink-muted); margin-top:4px;">Speed: 92 km/h</div>
+          </div>
+        </div>
+
+        <!-- Station Milestones Timeline -->
+        <div class="stoppage-timeline">
+          
+          <div class="stop-node">
+            <span class="stop-marker" style="background:var(--status-avl-text); color:#FFFFFF; border-color:var(--status-avl-text);">✓</span>
+            <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-md); padding:10px 14px; display:flex; justify-content:space-between;">
+              <div>
+                <strong>New Delhi (NDLS)</strong>
+                <span style="font-size:10px; color:var(--ink-muted); display:block;">Departed • Platform 14</span>
+              </div>
+              <div style="text-align:right; font-size:12px;" class="mono">
+                20:10 (Actual: 20:10)
+              </div>
+            </div>
+          </div>
+
+          <div class="stop-node">
+            <span class="stop-marker" style="background:var(--status-avl-text); color:#FFFFFF; border-color:var(--status-avl-text);">✓</span>
+            <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-md); padding:10px 14px; display:flex; justify-content:space-between;">
+              <div>
+                <strong>Aligarh Junction (ALJN)</strong>
+                <span style="font-size:10px; color:var(--ink-muted); display:block;">Departed • Platform 3</span>
+              </div>
+              <div style="text-align:right; font-size:12px;" class="mono">
+                22:00 (Actual: 22:02)
+              </div>
+            </div>
+          </div>
+
+          <!-- Current Train Location Indicator -->
+          <div class="stop-node">
+            <span class="stop-marker" style="background:var(--primary); color:#FFFFFF; border-color:var(--primary); box-shadow:0 0 0 4px rgba(249,115,22,0.2);">●</span>
+            <div style="background:var(--primary-tint); border:1px solid var(--primary-border); border-radius:var(--radius-md); padding:12px 14px; display:flex; justify-content:space-between;">
+              <div>
+                <strong style="color:var(--primary);">Kanpur Central (CNB)</strong>
+                <span style="font-size:11px; font-weight:700; color:var(--primary); display:block;">Train Arrived at Platform 1</span>
+              </div>
+              <div style="text-align:right; font-size:12px;" class="mono">
+                <strong style="color:var(--primary);">Arr: 01:35 | Dep: 01:40</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="stop-node">
+            <span class="stop-marker">4</span>
+            <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-md); padding:10px 14px; display:flex; justify-content:space-between; opacity:0.75;">
+              <div>
+                <strong>Prayagraj Junction (PRYJ)</strong>
+                <span style="font-size:10px; color:var(--ink-muted); display:block;">Next Halt • Expected Platform 4</span>
+              </div>
+              <div style="text-align:right; font-size:12px;" class="mono">
+                ETA: 04:00
+              </div>
+            </div>
+          </div>
+
+          <div class="stop-node">
+            <span class="stop-marker">5</span>
+            <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-md); padding:10px 14px; display:flex; justify-content:space-between; opacity:0.75;">
+              <div>
+                <strong>Ara Junction (ARA)</strong>
+                <span style="font-size:10px; color:var(--ink-muted); display:block;">Destination Terminus • Expected Platform 2</span>
+              </div>
+              <div style="text-align:right; font-size:12px;" class="mono">
+                ETA: 10:10
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modern Quiet Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none; padding:0;">
+        <span>© 2026 BharatRail. Real-Time NTES GPS Tracking.</span>
+        <a href="help.html" style="color:var(--primary); font-weight:600;">Railway Helpline: 139</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
