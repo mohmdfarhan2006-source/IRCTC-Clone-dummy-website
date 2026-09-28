@@ -3,34 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cancellation Rules & Refund Tariffs — BharatRail</title>
+  <title>Cancellation Rules & Statutory Refund Tariffs — BharatRail Official</title>
   <link rel="stylesheet" href="css/style.css">
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-  <!-- Top Sticky Navigation Header -->
+  <!-- Top Sticky Navigation Header (Deep Railway Blue #123B6D & Dark Navy #082B52) -->
   <header class="site-header">
     <div class="container nav-wrap">
       <a href="index.html" class="brand-link">
         <div class="brand-logo-icon">
-          <i data-lucide="train" style="width:20px;height:20px;"></i>
+          <i data-lucide="train" style="width:22px;height:22px;"></i>
         </div>
-        <div>
-          <span class="brand-title">Bharat<span>Rail</span></span>
-          <span class="brand-badge">Refunds</span>
+        <div class="brand-title">
+          <span>Bharat<span class="accent">Rail</span></span>
+          <span class="brand-badge">Official Railway Portal</span>
         </div>
       </a>
 
       <nav class="nav-links">
-        <a href="index.html" class="nav-link">Book Trains</a>
-        <a href="pnr.html" class="nav-link">PNR Status</a>
-        <a href="trains.html" class="nav-link">Train Schedule</a>
-        <a href="live-status.html" class="nav-link">Live Status</a>
-        <a href="refunds.html" class="nav-link active">Cancel & Refunds</a>
+        <a href="index.html" class="nav-link">
+          <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+          <span>Book Ticket</span>
+        </a>
+        <a href="pnr.html" class="nav-link">
+          <i data-lucide="file-check" style="width:14px;height:14px;"></i>
+          <span>PNR Status</span>
+        </a>
+        <a href="trains.html" class="nav-link">
+          <i data-lucide="map" style="width:14px;height:14px;"></i>
+          <span>Train Schedule</span>
+        </a>
+        <a href="live-status.html" class="nav-link">
+          <i data-lucide="clock" style="width:14px;height:14px;"></i>
+          <span>Live Status</span>
+        </a>
+        <a href="bookings.html" class="nav-link">
+          <i data-lucide="ticket" style="width:14px;height:14px;"></i>
+          <span>My Bookings</span>
+        </a>
+        <a href="admin.html" class="nav-link">
+          <i data-lucide="database" style="width:14px;height:14px;"></i>
+          <span>Data Coverage</span>
+        </a>
+        <a href="refunds.html" class="nav-link active">
+          <i data-lucide="shield-check" style="width:14px;height:14px;"></i>
+          <span>Refunds</span>
+        </a>
       </nav>
 
       <div class="header-actions">
+        <div class="railmadad-badge" title="24x7 RailMadad Helpline">
+          <i data-lucide="phone-call" style="width:13px;height:13px;"></i>
+          <span>Helpline: 139</span>
+        </div>
         <a href="login.html" class="btn-signin">
           <i data-lucide="user" style="width:14px;height:14px;"></i>
           <span>Sign In</span>
@@ -39,113 +67,117 @@
     </div>
   </header>
 
-  <main class="content-section">
-    <div class="container" style="max-width:860px;">
+  <main class="content-section" style="padding: 32px 0 64px 0;">
+    <div class="container" style="max-width:880px;">
       
-      <!-- Banner -->
-      <div class="card" style="padding:24px;">
-        <div style="display:flex; align-items:center; gap:14px;">
-          <div class="brand-logo-icon" style="width:44px; height:44px;">
-            <i data-lucide="shield-check" style="width:24px;height:24px;"></i>
+      <!-- Banner Card -->
+      <div class="card" style="padding:28px; margin-bottom:24px; box-shadow:var(--shadow-sm); border-left:4px solid var(--rail-blue);">
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div class="brand-logo-icon" style="width:48px; height:48px; background:var(--bg-light-blue); color:var(--rail-blue); border:1px solid var(--border);">
+            <i data-lucide="shield-check" style="width:26px;height:26px;"></i>
           </div>
           <div>
-            <h1 style="font-size:1.4rem; font-weight:800;">Official Ticket Cancellation & Refund Tariffs</h1>
-            <p style="font-size:12px; color:var(--ink-muted); margin-top:2px;">
-              Statutory refund rules governed by the Ministry of Railways, Government of India.
+            <h1 style="font-size:1.45rem; font-weight:900; color:var(--ink); margin:0;">
+              Statutory Railway Cancellation & Refund Tariffs
+            </h1>
+            <p style="font-size:12px; color:var(--ink-secondary); margin-top:4px;">
+              Official Indian Railways Passenger Reservation Rules, Gazette Notification No. G.S.R. 836(E), Ministry of Railways.
             </p>
           </div>
         </div>
       </div>
 
-      <!-- Quick Cancel PNR Action -->
-      <div class="card" style="padding:20px;">
-        <h3 style="font-size:13px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">Instant PNR Ticket Cancellation</h3>
-        <p style="font-size:12px; color:var(--ink-muted); margin-bottom:12px;">
-          To cancel an existing reservation and receive an instant refund credited to your source payment account, enter your PNR below:
+      <!-- Quick Cancel PNR Action Card -->
+      <div class="card" style="padding:22px; margin-bottom:24px; background:var(--bg-light-blue); border:1px solid var(--border);">
+        <h3 style="font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink); margin:0 0 6px 0;">
+          Instant PNR Ticket Cancellation & Direct Refund
+        </h3>
+        <p style="font-size:12px; color:var(--ink-secondary); margin-bottom:14px;">
+          Enter your 10-digit PNR below to review statutory deductions and process an immediate refund to your source payment account:
         </p>
-        <form action="pnr.html" method="GET" style="display:flex; gap:10px; max-width:500px;">
+        <form action="pnr.html" method="GET" style="display:flex; gap:10px; max-width:520px;">
           <div class="search-input-wrap" style="flex:1;">
-            <span class="search-input-icon"><i data-lucide="hash" style="width:14px;height:14px;"></i></span>
-            <input type="text" name="pnr" placeholder="Enter 10-digit PNR" value="824-3197430" required>
+            <span class="search-input-icon"><i data-lucide="hash" style="width:15px;height:15px;"></i></span>
+            <input type="text" name="pnr" placeholder="Enter 10-digit PNR (e.g. 824-3197430)" value="824-3197430" class="mono" style="font-weight:700;" required>
           </div>
-          <button type="submit" class="btn-search" style="margin:0; padding:10px 20px;">
-            <span>Review & Cancel</span>
+          <button type="submit" class="btn-search" style="margin:0; padding:10px 22px; font-size:12px;">
+            <span>Inspect & Cancel</span>
           </button>
         </form>
       </div>
 
-      <!-- Statutory Refund Tariffs Table -->
-      <div class="card">
-        <h3 style="font-size:14px; font-weight:800; text-transform:uppercase; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:14px;">
-          Flat Cancellation Charge Matrix (More than 48 Hours Before Scheduled Departure)
+      <!-- Statutory Refund Tariffs Table Card -->
+      <div class="card" style="padding:24px; margin-bottom:24px; box-shadow:var(--shadow-sm);">
+        <h3 style="font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink); border-bottom:1px solid var(--border); padding-bottom:12px; margin:0 0 16px 0;">
+          Statutory Flat Cancellation Fee Matrix (> 48 Hours Before Departure)
         </h3>
 
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
+        <div class="table-wrap" style="border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden;">
+          <table class="data-table" style="width:100%; border-collapse:collapse; font-size:12px;">
+            <thead style="background:var(--bg-light-blue); border-bottom:1px solid var(--border);">
               <tr>
-                <th>Class of Reservation</th>
-                <th>Standard Flat Deduction</th>
-                <th>GST Rate</th>
-                <th>Net Deducted Amount</th>
+                <th style="padding:10px 14px; text-align:left;">Travel Class</th>
+                <th style="padding:10px 14px; text-align:left;">Statutory Flat Deduction</th>
+                <th style="padding:10px 14px; text-align:left;">GST Applicable</th>
+                <th style="padding:10px 14px; text-align:left;">Total Deducted Amount</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td style="font-weight:700;">AC First Class / Executive (1A / EC)</td>
-                <td class="mono font-bold">₹240</td>
-                <td>5%</td>
-                <td class="mono font-bold" style="color:var(--status-reg-text);">₹252 / passenger</td>
+                <td style="padding:12px 14px; font-weight:700;">AC First Class / Exec Chair Car (1A / EC)</td>
+                <td style="padding:12px 14px;" class="mono font-bold">₹240</td>
+                <td style="padding:12px 14px;">5%</td>
+                <td style="padding:12px 14px;" class="mono font-bold" style="color:var(--status-reg-text);">₹252 / pax</td>
               </tr>
               <tr>
-                <td style="font-weight:700;">AC 2 Tier (2A)</td>
-                <td class="mono font-bold">₹200</td>
-                <td>5%</td>
-                <td class="mono font-bold" style="color:var(--status-reg-text);">₹210 / passenger</td>
+                <td style="padding:12px 14px; font-weight:700;">AC 2 Tier (2A)</td>
+                <td style="padding:12px 14px;" class="mono font-bold">₹200</td>
+                <td style="padding:12px 14px;">5%</td>
+                <td style="padding:12px 14px;" class="mono font-bold" style="color:var(--status-reg-text);">₹210 / pax</td>
               </tr>
               <tr>
-                <td style="font-weight:700;">AC 3 Tier / Chair Car (3A / 3E / CC)</td>
-                <td class="mono font-bold">₹180</td>
-                <td>5%</td>
-                <td class="mono font-bold" style="color:var(--status-reg-text);">₹189 / passenger</td>
+                <td style="padding:12px 14px; font-weight:700;">AC 3 Tier / 3 Economy / Chair Car (3A / 3E / CC)</td>
+                <td style="padding:12px 14px;" class="mono font-bold">₹180</td>
+                <td style="padding:12px 14px;">5%</td>
+                <td style="padding:12px 14px;" class="mono font-bold" style="color:var(--status-reg-text);">₹189 / pax</td>
               </tr>
               <tr>
-                <td style="font-weight:700;">Sleeper Class (SL)</td>
-                <td class="mono font-bold">₹120</td>
-                <td>Nil</td>
-                <td class="mono font-bold" style="color:var(--status-reg-text);">₹120 / passenger</td>
+                <td style="padding:12px 14px; font-weight:700;">Sleeper Class (SL)</td>
+                <td style="padding:12px 14px;" class="mono font-bold">₹120</td>
+                <td style="padding:12px 14px;">Nil</td>
+                <td style="padding:12px 14px;" class="mono font-bold" style="color:var(--status-reg-text);">₹120 / pax</td>
               </tr>
               <tr>
-                <td style="font-weight:700;">Second Class (2S)</td>
-                <td class="mono font-bold">₹60</td>
-                <td>Nil</td>
-                <td class="mono font-bold" style="color:var(--status-reg-text);">₹60 / passenger</td>
+                <td style="padding:12px 14px; font-weight:700;">Second Class Reserved (2S)</td>
+                <td style="padding:12px 14px;" class="mono font-bold">₹60</td>
+                <td style="padding:12px 14px;">Nil</td>
+                <td style="padding:12px 14px;" class="mono font-bold" style="color:var(--status-reg-text);">₹60 / pax</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Time Window Slabs -->
-      <div class="card">
-        <h3 style="font-size:14px; font-weight:800; text-transform:uppercase; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:14px;">
-          Cancellation Time Windows & Deduction Slabs
+      <!-- Time Window Slabs Card -->
+      <div class="card" style="padding:24px; box-shadow:var(--shadow-sm);">
+        <h3 style="font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink); border-bottom:1px solid var(--border); padding-bottom:12px; margin:0 0 16px 0;">
+          Cancellation Time Windows & Sliding Slabs
         </h3>
 
-        <div style="display:flex; flex-direction:column; gap:14px; font-size:13px; color:var(--ink-secondary);">
-          <div style="background:var(--canvas-subtle); padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
-            <strong style="color:var(--ink);">Between 48 hours and 12 hours before scheduled departure:</strong>
-            <p style="margin-top:2px;">Cancellation charge is <strong>25% of the total fare</strong> (subject to the minimum flat class charge above).</p>
+        <div style="display:flex; flex-direction:column; gap:12px; font-size:12px; color:var(--ink-secondary);">
+          <div style="background:var(--bg-light-blue); padding:14px 16px; border-radius:var(--radius-md); border:1px solid var(--border);">
+            <strong style="color:var(--ink); font-size:13px; display:block; margin-bottom:2px;">Between 48 hours and 12 hours before scheduled departure:</strong>
+            <span>Cancellation charge is <strong>25% of the total fare</strong> (subject to the minimum flat class charge).</span>
           </div>
 
-          <div style="background:var(--canvas-subtle); padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
-            <strong style="color:var(--ink);">Between 12 hours and up to 4 hours before scheduled departure:</strong>
-            <p style="margin-top:2px;">Cancellation charge is <strong>50% of the total fare</strong> (subject to the minimum flat class charge).</p>
+          <div style="background:var(--bg-light-blue); padding:14px 16px; border-radius:var(--radius-md); border:1px solid var(--border);">
+            <strong style="color:var(--ink); font-size:13px; display:block; margin-bottom:2px;">Between 12 hours and up to 4 hours before scheduled departure:</strong>
+            <span>Cancellation charge is <strong>50% of the total fare</strong> (subject to the minimum flat class charge).</span>
           </div>
 
-          <div style="background:var(--canvas-subtle); padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
-            <strong style="color:var(--status-reg-text);">Less than 4 hours before departure or after chart preparation:</strong>
-            <p style="margin-top:2px;"><strong>No refund is admissible</strong> on confirmed tickets once reservation charts are prepared.</p>
+          <div style="background:rgba(215, 25, 32, 0.06); padding:14px 16px; border-radius:var(--radius-md); border:1px solid rgba(215, 25, 32, 0.2);">
+            <strong style="color:var(--rail-red); font-size:13px; display:block; margin-bottom:2px;">Less than 4 hours before departure or post chart preparation:</strong>
+            <span><strong>No statutory refund is admissible</strong> on confirmed tickets once reservation charts are prepared. Online TDR must be filed for train cancellations or railway service deficiencies.</span>
           </div>
         </div>
       </div>
@@ -153,12 +185,98 @@
     </div>
   </main>
 
-  <!-- Modern Quiet Footer -->
+  <!-- Mobile Bottom Sticky Navigation Bar -->
+  <nav class="mobile-nav">
+    <div class="mobile-nav-items">
+      <a href="index.html" class="mobile-nav-item">
+        <i data-lucide="compass" style="width:18px;height:18px;"></i>
+        <span>Search</span>
+      </a>
+      <a href="pnr.html" class="mobile-nav-item">
+        <i data-lucide="file-check" style="width:18px;height:18px;"></i>
+        <span>PNR</span>
+      </a>
+      <a href="bookings.html" class="mobile-nav-item">
+        <i data-lucide="ticket" style="width:18px;height:18px;"></i>
+        <span>Trips</span>
+      </a>
+      <a href="live-status.html" class="mobile-nav-item">
+        <i data-lucide="clock" style="width:18px;height:18px;"></i>
+        <span>Status</span>
+      </a>
+      <a href="login.html" class="mobile-nav-item">
+        <i data-lucide="user" style="width:18px;height:18px;"></i>
+        <span>Account</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Modern Quiet Footer (Dark Navy #082B52) -->
   <footer class="site-footer">
     <div class="container">
-      <div class="footer-bottom" style="border:none; padding:0;">
-        <span>© 2026 BharatRail. Official Passenger Tariffs.</span>
-        <a href="help.html" style="color:var(--primary); font-weight:600;">24x7 RailMadad Assistance</a>
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-link">
+            <div class="brand-logo-icon">
+              <i data-lucide="train" style="width:20px;height:20px;"></i>
+            </div>
+            <span class="brand-title">Bharat<span class="accent">Rail</span></span>
+          </div>
+          <p>
+            Official Indian Railway Passenger Reservation & Timetable Portal. Guaranteed verified routes, authentic coach-berth layouts, and transparent statutory refunds.
+          </p>
+          <div style="margin-top:16px; font-size:12px; font-weight:700; color:var(--rail-gold);">
+            24x7 RailMadad: 139 | RPF Security: 182
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Services</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Book Train Ticket</a></li>
+            <li><a href="pnr.html">PNR Status & Charting</a></li>
+            <li><a href="trains.html">Train Timetables</a></li>
+            <li><a href="live-status.html">Live NTES Status</a></li>
+            <li><a href="bookings.html">My Bookings</a></li>
+            <li><a href="refunds.html">Cancellation & Refunds</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Guidelines</h4>
+          <ul class="footer-links">
+            <li><a href="help.html">Tatkal Booking Timings</a></li>
+            <li><a href="help.html">Quota Allocation Rules</a></li>
+            <li><a href="refunds.html">Cancellation Tariffs</a></li>
+            <li><a href="help.html">Vande Bharat Coach Layouts</a></li>
+            <li><a href="help.html">Senior Citizen Concession</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Administration</h4>
+          <ul class="footer-links">
+            <li><a href="admin.html">Data Coverage Audit</a></li>
+            <li><a href="admin.html">Route Verification Tests</a></li>
+            <li><a href="help.html">Passenger Charter</a></li>
+            <li><a href="help.html">File TDR Online</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Legal</h4>
+          <ul class="footer-links">
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="refunds.html">Statutory Tariffs</a></li>
+            <li><a href="terms.html">Security Architecture</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 BharatRail. Official Indian Railway Reservation Portal.</span>
+        <span>Independent Railway Booking & Timetable System</span>
       </div>
     </div>
   </footer>

@@ -3,127 +3,166 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Electronic Reservation Slip (ERS) — BharatRail</title>
+  <title>Electronic Reservation Slip (ERS) — BharatRail Official</title>
   <link rel="stylesheet" href="css/style.css">
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-  <!-- Top Sticky Navigation Header -->
+  <!-- Top Sticky Navigation Header (Deep Railway Blue #123B6D & Dark Navy #082B52) -->
   <header class="site-header no-print">
     <div class="container nav-wrap">
       <a href="index.html" class="brand-link">
         <div class="brand-logo-icon">
-          <i data-lucide="train" style="width:20px;height:20px;"></i>
+          <i data-lucide="train" style="width:22px;height:22px;"></i>
         </div>
-        <div>
-          <span class="brand-title">Bharat<span>Rail</span></span>
-          <span class="brand-badge">Confirmation</span>
+        <div class="brand-title">
+          <span>Bharat<span class="accent">Rail</span></span>
+          <span class="brand-badge">Official Railway Portal</span>
         </div>
       </a>
 
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">
+          <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+          <span>Book Ticket</span>
+        </a>
+        <a href="pnr.html" class="nav-link">
+          <i data-lucide="file-check" style="width:14px;height:14px;"></i>
+          <span>PNR Status</span>
+        </a>
+        <a href="trains.html" class="nav-link">
+          <i data-lucide="map" style="width:14px;height:14px;"></i>
+          <span>Train Schedule</span>
+        </a>
+        <a href="live-status.html" class="nav-link">
+          <i data-lucide="clock" style="width:14px;height:14px;"></i>
+          <span>Live Status</span>
+        </a>
+        <a href="bookings.html" class="nav-link active">
+          <i data-lucide="ticket" style="width:14px;height:14px;"></i>
+          <span>My Bookings</span>
+        </a>
+        <a href="admin.html" class="nav-link">
+          <i data-lucide="database" style="width:14px;height:14px;"></i>
+          <span>Data Coverage</span>
+        </a>
+        <a href="refunds.html" class="nav-link">
+          <i data-lucide="shield-check" style="width:14px;height:14px;"></i>
+          <span>Refunds</span>
+        </a>
+      </nav>
+
       <div class="header-actions">
-        <button type="button" onclick="window.print()" class="btn-signin" style="background:var(--primary); color:#FFFFFF; border:none;">
+        <button type="button" onclick="window.print()" class="btn-signin" style="background:var(--rail-blue); color:#FFFFFF; border-color:var(--rail-blue); font-weight:700;">
           <i data-lucide="printer" style="width:14px;height:14px;"></i>
-          <span>Print Ticket</span>
+          <span>Print ERS Slip</span>
         </button>
       </div>
     </div>
   </header>
 
-  <main class="content-section">
-    <div class="container" style="max-width:860px;" id="ersContainer">
+  <main class="content-section" style="padding: 32px 0 64px 0;">
+    <div class="container" style="max-width:880px;" id="ersContainer">
       
-      <!-- Printable ERS Ticket -->
-      <div class="ers-ticket">
+      <!-- Printable ERS Ticket Card -->
+      <div class="card ers-ticket" style="padding:32px; border:2px solid var(--border); box-shadow:var(--shadow-md);">
         
-        <!-- Header -->
-        <div class="ers-header">
+        <!-- Ticket Header Banner -->
+        <div class="ers-header" style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid var(--rail-blue); padding-bottom:18px; margin-bottom:20px;">
           <div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span class="brand-title" style="font-size:1.3rem;">Bharat<span>Rail</span></span>
-              <span class="avl-status-tag available">Confirmed Booking</span>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="brand-title" style="font-size:1.4rem; color:var(--rail-blue); font-weight:900;">Bharat<span style="color:var(--rail-red);">Rail</span></span>
+              <span class="avl-status-tag available" style="font-size:11px; padding:4px 10px;">
+                CONFIRMED RESERVATION
+              </span>
             </div>
-            <p style="font-size:11px; color:var(--ink-muted); margin-top:2px;">
-              Official Indian Railways Electronic Reservation Slip (ERS) • IRCTC Validated
+            <p style="font-size:12px; color:var(--ink-secondary); margin-top:4px;">
+              Authoritative Indian Railways Electronic Reservation Slip (ERS) • Valid with Govt Photo ID
             </p>
           </div>
 
           <div style="text-align:right;">
-            <div style="font-size:10px; font-weight:700; color:var(--ink-muted); text-transform:uppercase;">Passenger Name Record</div>
-            <div class="pnr-pill" id="ersPNR">824-3197430</div>
+            <div style="font-size:11px; font-weight:800; color:var(--ink-secondary); text-transform:uppercase; letter-spacing:0.04em;">PNR Number</div>
+            <div class="pnr-pill mono" id="ersPNR" style="font-size:16px; font-weight:900; background:var(--bg-light-blue); color:var(--rail-blue); padding:6px 14px; border-radius:var(--radius-sm); border:1px solid var(--border); margin-top:4px; display:inline-block;">824-3197430</div>
           </div>
         </div>
 
         <!-- Train & Journey Summary Grid -->
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px; background:var(--canvas-subtle); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border); margin-bottom:20px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:14px; background:var(--bg-light-blue); padding:18px; border-radius:var(--radius-md); border:1px solid var(--border); margin-bottom:24px;">
           <div>
-            <span class="search-label">Train & Class</span>
-            <strong id="ersTrain" style="font-size:13px; color:var(--ink);">#12402 - Magadh Express (3A)</strong>
+            <span style="font-size:11px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase; display:block;">Train & Class</span>
+            <strong id="ersTrain" style="font-size:13px; color:var(--ink); display:block; margin-top:3px;">#12402 - Magadh Express (3A)</strong>
           </div>
           <div>
-            <span class="search-label">Route & Date</span>
-            <strong id="ersRoute" style="font-size:13px; color:var(--ink);">NDLS → ARA • 2026-09-28</strong>
+            <span style="font-size:11px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase; display:block;">Route & Date</span>
+            <strong id="ersRoute" style="font-size:13px; color:var(--ink); display:block; margin-top:3px;">NDLS → ARA • 2026-09-28</strong>
           </div>
           <div>
-            <span class="search-label">Timings</span>
-            <strong id="ersDepArr" style="font-size:13px; color:var(--ink);">Dep: 20:10 | Arr: 10:10</strong>
+            <span style="font-size:11px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase; display:block;">Scheduled Timings</span>
+            <strong id="ersDepArr" style="font-size:13px; color:var(--ink); display:block; margin-top:3px;">Dep: 20:10 | Arr: 10:10</strong>
           </div>
           <div>
-            <span class="search-label">Total Fare Paid</span>
-            <strong id="ersTotalFare" class="mono" style="font-size:14px; color:var(--primary);">₹1,387</strong>
+            <span style="font-size:11px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase; display:block;">Total Tariff Paid</span>
+            <strong id="ersTotalFare" class="mono" style="font-size:15px; color:var(--rail-blue); display:block; margin-top:2px;">₹1,387</strong>
           </div>
         </div>
 
         <!-- Passenger Allotment Table -->
-        <h4 style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--ink); margin-bottom:8px;">
-          Passenger Reservation & Berth Allocation
-        </h4>
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h4 style="font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink); margin:0;">
+            Passenger Reservation & Coach/Berth Allocation
+          </h4>
+          <span style="font-size:11px; color:var(--status-avl-text); font-weight:700;">Chart Status: Chart Not Prepared</span>
+        </div>
+        
+        <div class="table-wrap" style="border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden;">
+          <table class="data-table" style="width:100%; border-collapse:collapse; font-size:12px;">
+            <thead style="background:var(--bg-light-blue); border-bottom:1px solid var(--border);">
               <tr>
-                <th>#</th>
-                <th>Passenger Name</th>
-                <th>Age / Gender</th>
-                <th>Booking Status</th>
-                <th>Current Status / Berth</th>
+                <th style="padding:10px 14px; text-align:left;">#</th>
+                <th style="padding:10px 14px; text-align:left;">Passenger Name</th>
+                <th style="padding:10px 14px; text-align:left;">Age / Gender</th>
+                <th style="padding:10px 14px; text-align:left;">Booking Status</th>
+                <th style="padding:10px 14px; text-align:left;">Current Status / Berth</th>
               </tr>
             </thead>
             <tbody id="ersPaxTableBody">
               <tr>
-                <td class="mono font-bold">1</td>
-                <td style="font-weight:700;">Aarav Mehta</td>
-                <td>32 / MALE</td>
-                <td class="mono font-bold" style="color:var(--status-avl-text);">CNF / B1 / 12</td>
-                <td style="font-weight:600;">Coach B1, Berth 12 (Lower)</td>
+                <td class="mono font-bold" style="padding:12px 14px;">1</td>
+                <td style="font-weight:700; padding:12px 14px;">Aarav Mehta</td>
+                <td style="padding:12px 14px;">32 / MALE</td>
+                <td class="mono font-bold" style="color:var(--status-avl-text); padding:12px 14px;">CNF / B1 / 12</td>
+                <td style="font-weight:600; padding:12px 14px;">Coach B1, Berth 12 (Lower)</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <!-- QR Code & Security Stamp -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding-top:16px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:28px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:18px;">
           <div style="display:flex; align-items:center; gap:16px;">
-            <div class="qr-graphic" style="width:80px; height:80px;">
-              <i data-lucide="qr-code" style="width:54px; height:54px; color:var(--ink);"></i>
+            <div class="qr-graphic" style="width:76px; height:76px; background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center;">
+              <i data-lucide="qr-code" style="width:52px; height:52px; color:var(--rail-blue);"></i>
             </div>
             <div>
-              <span style="font-size:11px; font-weight:700; color:var(--status-avl-text); display:flex; align-items:center; gap:4px;">
+              <span style="font-size:12px; font-weight:800; color:var(--status-avl-text); display:flex; align-items:center; gap:5px;">
                 <i data-lucide="check-circle-2" style="width:14px;height:14px;"></i>
-                Verified IRCTC Digital Signature
+                Verified IRCTC Digital ERS Signature
               </span>
-              <p style="font-size:10px; color:var(--ink-muted); margin-top:2px; max-width:320px;">
-                Scan QR code onboard for contactless TTE verification with government-approved original photo ID.
+              <p style="font-size:11px; color:var(--ink-secondary); margin-top:3px; max-width:340px; line-height:1.4;">
+                Present this Electronic Reservation Slip along with original government photo identity (Aadhaar / Voter ID / Passport) during travel.
               </p>
             </div>
           </div>
 
-          <div class="no-print" style="display:flex; gap:10px;">
-            <a href="index.html" class="btn-signin">
-              <span>Book Another Ticket</span>
+          <div class="no-print" style="display:flex; gap:10px; align-items:center;">
+            <a href="bookings.html" class="btn-signin" style="font-size:12px;">
+              <i data-lucide="ticket" style="width:14px;height:14px;"></i>
+              <span>My Bookings</span>
             </a>
-            <button type="button" onclick="window.print()" class="btn-search" style="margin:0; padding:10px 18px;">
+            <button type="button" onclick="window.print()" class="btn-search" style="margin:0; padding:10px 20px; font-size:12px;">
               <i data-lucide="printer" style="width:14px;height:14px;"></i>
               <span>Print ERS Slip</span>
             </button>
@@ -134,6 +173,102 @@
 
     </div>
   </main>
+
+  <!-- Mobile Bottom Sticky Navigation Bar -->
+  <nav class="mobile-nav">
+    <div class="mobile-nav-items">
+      <a href="index.html" class="mobile-nav-item">
+        <i data-lucide="compass" style="width:18px;height:18px;"></i>
+        <span>Search</span>
+      </a>
+      <a href="pnr.html" class="mobile-nav-item">
+        <i data-lucide="file-check" style="width:18px;height:18px;"></i>
+        <span>PNR</span>
+      </a>
+      <a href="bookings.html" class="mobile-nav-item active">
+        <i data-lucide="ticket" style="width:18px;height:18px;"></i>
+        <span>Trips</span>
+      </a>
+      <a href="live-status.html" class="mobile-nav-item">
+        <i data-lucide="clock" style="width:18px;height:18px;"></i>
+        <span>Status</span>
+      </a>
+      <a href="login.html" class="mobile-nav-item">
+        <i data-lucide="user" style="width:18px;height:18px;"></i>
+        <span>Account</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Modern Quiet Footer (Dark Navy #082B52) -->
+  <footer class="site-footer no-print">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-link">
+            <div class="brand-logo-icon">
+              <i data-lucide="train" style="width:20px;height:20px;"></i>
+            </div>
+            <span class="brand-title">Bharat<span class="accent">Rail</span></span>
+          </div>
+          <p>
+            Official Indian Railway Passenger Reservation & Timetable Portal. Guaranteed verified routes, authentic coach-berth layouts, and transparent statutory refunds.
+          </p>
+          <div style="margin-top:16px; font-size:12px; font-weight:700; color:var(--rail-gold);">
+            24x7 RailMadad: 139 | RPF Security: 182
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Services</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Book Train Ticket</a></li>
+            <li><a href="pnr.html">PNR Status & Charting</a></li>
+            <li><a href="trains.html">Train Timetables</a></li>
+            <li><a href="live-status.html">Live NTES Status</a></li>
+            <li><a href="bookings.html">My Bookings</a></li>
+            <li><a href="refunds.html">Cancellation & Refunds</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Guidelines</h4>
+          <ul class="footer-links">
+            <li><a href="help.html">Tatkal Booking Timings</a></li>
+            <li><a href="help.html">Quota Allocation Rules</a></li>
+            <li><a href="refunds.html">Cancellation Tariffs</a></li>
+            <li><a href="help.html">Vande Bharat Coach Layouts</a></li>
+            <li><a href="help.html">Senior Citizen Concession</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Administration</h4>
+          <ul class="footer-links">
+            <li><a href="admin.html">Data Coverage Audit</a></li>
+            <li><a href="admin.html">Route Verification Tests</a></li>
+            <li><a href="help.html">Passenger Charter</a></li>
+            <li><a href="help.html">File TDR Online</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Legal</h4>
+          <ul class="footer-links">
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="refunds.html">Statutory Tariffs</a></li>
+            <li><a href="terms.html">Security Architecture</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 BharatRail. Official Indian Railway Reservation Portal.</span>
+        <span>Independent Railway Booking & Timetable System</span>
+      </div>
+    </div>
+  </footer>
 
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Bookings & Travel History — BharatRail Official</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Header (Deep Railway Blue #123B6D & Dark Navy #082B52) -->
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="index.html" class="brand-link">
+        <div class="brand-logo-icon">
+          <i data-lucide="train" style="width:22px;height:22px;"></i>
+        </div>
+        <div class="brand-title">
+          <span>Bharat<span class="accent">Rail</span></span>
+          <span class="brand-badge">Official Railway Portal</span>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">
+          <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+          <span>Book Ticket</span>
+        </a>
+        <a href="pnr.html" class="nav-link">
+          <i data-lucide="file-check" style="width:14px;height:14px;"></i>
+          <span>PNR Status</span>
+        </a>
+        <a href="trains.html" class="nav-link">
+          <i data-lucide="map" style="width:14px;height:14px;"></i>
+          <span>Train Schedule</span>
+        </a>
+        <a href="live-status.html" class="nav-link">
+          <i data-lucide="clock" style="width:14px;height:14px;"></i>
+          <span>Live Status</span>
+        </a>
+        <a href="bookings.html" class="nav-link active">
+          <i data-lucide="ticket" style="width:14px;height:14px;"></i>
+          <span>My Bookings</span>
+        </a>
+        <a href="admin.html" class="nav-link">
+          <i data-lucide="database" style="width:14px;height:14px;"></i>
+          <span>Data Coverage</span>
+        </a>
+        <a href="refunds.html" class="nav-link">
+          <i data-lucide="shield-check" style="width:14px;height:14px;"></i>
+          <span>Refunds</span>
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="railmadad-badge" title="24x7 RailMadad Helpline">
+          <i data-lucide="phone-call" style="width:13px;height:13px;"></i>
+          <span>Helpline: 139</span>
+        </div>
+        <a href="index.html" class="btn-signin" style="background:var(--rail-blue); color:#FFFFFF; border-color:var(--rail-blue);">
+          <i data-lucide="plus" style="width:14px;height:14px;"></i>
+          <span>New Booking</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="content-section" style="padding: 32px 0 64px 0;">
+    <div class="container" style="max-width:880px;">
+      
+      <!-- Page Header -->
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:24px; border-bottom:1px solid var(--border); padding-bottom:16px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <span style="font-size:11px; font-weight:800; color:var(--rail-blue); text-transform:uppercase; letter-spacing:0.04em; display:block; margin-bottom:4px;">
+            User Travel Portfolio
+          </span>
+          <h1 style="font-size:1.6rem; font-weight:900; color:var(--ink); margin:0;">
+            My Booked Train Tickets
+          </h1>
+          <p style="font-size:12px; color:var(--ink-secondary); margin-top:4px;">
+            Manage confirmed reservations, view Electronic Reservation Slips (ERS), check live PNR status, and process cancellations.
+          </p>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+          <a href="index.html" class="btn-search" style="margin:0; padding:10px 18px; font-size:12px;">
+            <i data-lucide="calendar-plus" style="width:14px;height:14px;"></i>
+            <span>Book New Train</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Bookings List Container -->
+      <div id="myBookingsList">
+        <!-- Dynamically rendered by app.js -->
+        <div class="card text-center" style="padding:48px 20px;">
+          <i data-lucide="loader-2" class="spin" style="width:28px;height:28px; color:var(--rail-blue); margin-bottom:12px;"></i>
+          <div style="font-size:14px; font-weight:700; color:var(--ink);">Loading your railway reservations...</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Mobile Bottom Sticky Navigation Bar -->
+  <nav class="mobile-nav">
+    <div class="mobile-nav-items">
+      <a href="index.html" class="mobile-nav-item">
+        <i data-lucide="compass" style="width:18px;height:18px;"></i>
+        <span>Search</span>
+      </a>
+      <a href="pnr.html" class="mobile-nav-item">
+        <i data-lucide="file-check" style="width:18px;height:18px;"></i>
+        <span>PNR</span>
+      </a>
+      <a href="bookings.html" class="mobile-nav-item active">
+        <i data-lucide="ticket" style="width:18px;height:18px;"></i>
+        <span>Trips</span>
+      </a>
+      <a href="live-status.html" class="mobile-nav-item">
+        <i data-lucide="clock" style="width:18px;height:18px;"></i>
+        <span>Status</span>
+      </a>
+      <a href="login.html" class="mobile-nav-item">
+        <i data-lucide="user" style="width:18px;height:18px;"></i>
+        <span>Account</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Modern Quiet Footer (Dark Navy #082B52) -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-link">
+            <div class="brand-logo-icon">
+              <i data-lucide="train" style="width:20px;height:20px;"></i>
+            </div>
+            <span class="brand-title">Bharat<span class="accent">Rail</span></span>
+          </div>
+          <p>
+            Official Indian Railway Passenger Reservation & Timetable Portal. Guaranteed verified routes, authentic coach-berth layouts, and transparent statutory refunds.
+          </p>
+          <div style="margin-top:16px; font-size:12px; font-weight:700; color:var(--rail-gold);">
+            24x7 RailMadad: 139 | RPF Security: 182
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Services</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Book Train Ticket</a></li>
+            <li><a href="pnr.html">PNR Status & Charting</a></li>
+            <li><a href="trains.html">Train Timetables</a></li>
+            <li><a href="live-status.html">Live NTES Status</a></li>
+            <li><a href="bookings.html">My Bookings</a></li>
+            <li><a href="refunds.html">Cancellation & Refunds</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Guidelines</h4>
+          <ul class="footer-links">
+            <li><a href="help.html">Tatkal Booking Timings</a></li>
+            <li><a href="help.html">Quota Allocation Rules</a></li>
+            <li><a href="refunds.html">Cancellation Tariffs</a></li>
+            <li><a href="help.html">Vande Bharat Coach Layouts</a></li>
+            <li><a href="help.html">Senior Citizen Concession</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Administration</h4>
+          <ul class="footer-links">
+            <li><a href="admin.html">Data Coverage Audit</a></li>
+            <li><a href="admin.html">Route Verification Tests</a></li>
+            <li><a href="help.html">Passenger Charter</a></li>
+            <li><a href="help.html">File TDR Online</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Legal</h4>
+          <ul class="footer-links">
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="refunds.html">Statutory Tariffs</a></li>
+            <li><a href="terms.html">Security Architecture</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 BharatRail. Official Indian Railway Reservation Portal.</span>
+        <span>Independent Railway Booking & Timetable System</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

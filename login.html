@@ -3,74 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In — BharatRail</title>
+  <title>Sign In — BharatRail Official Portal</title>
   <link rel="stylesheet" href="css/style.css">
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body style="display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh;">
+<body style="display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh; background:var(--bg-light-blue);">
 
   <div class="container" style="max-width:440px; padding:30px 16px;">
     
-    <div class="card" style="padding:32px;">
+    <div class="card" style="padding:36px; box-shadow:var(--shadow-md);">
       
       <!-- Brand Logo Header -->
       <div style="text-align:center; margin-bottom:24px;">
-        <div class="brand-logo-icon" style="width:48px; height:48px; margin:0 auto 12px;">
-          <i data-lucide="train" style="width:26px;height:26px;"></i>
+        <div class="brand-logo-icon" style="width:52px; height:52px; margin:0 auto 12px; background:var(--rail-blue); color:#FFFFFF;">
+          <i data-lucide="train" style="width:28px;height:28px;"></i>
         </div>
-        <h1 class="brand-title" style="font-size:1.4rem;">Bharat<span>Rail</span></h1>
-        <p style="font-size:12px; color:var(--ink-muted); margin-top:2px;">
-          Indian Railway Passenger Reservation Sign In
+        <h1 class="brand-title" style="font-size:1.5rem; color:var(--rail-blue); font-weight:900;">Bharat<span style="color:var(--rail-red);">Rail</span></h1>
+        <p style="font-size:12px; color:var(--ink-secondary); margin-top:4px;">
+          Official Indian Railway Passenger Reservation Portal
         </p>
       </div>
 
       <form onsubmit="handleDemoLogin(event)">
-        <div class="form-group">
-          <label class="form-label">Email or Mobile Number</label>
+        <div class="form-group" style="margin-bottom:14px;">
+          <label class="form-label" style="font-size:12px; font-weight:700; color:var(--ink);">Email or Mobile Number</label>
           <input type="email" id="loginEmail" class="form-control" value="passenger@bharatrail.in" required>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" style="margin-bottom:18px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <label class="form-label" style="margin:0;">Password</label>
-            <a href="help.html" style="font-size:11px; color:var(--primary); font-weight:600;">Forgot?</a>
+            <label class="form-label" style="font-size:12px; font-weight:700; color:var(--ink); margin:0;">Password</label>
+            <a href="help.html" style="font-size:11px; color:var(--rail-blue); font-weight:700; text-decoration:none;">Forgot?</a>
           </div>
           <input type="password" id="loginPassword" class="form-control" value="Passenger@123" required>
         </div>
 
-        <button type="submit" class="btn-search" style="width:100%; margin-top:10px; padding:12px;">
-          <span>Sign In</span>
-          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+        <button type="submit" class="btn-search" style="width:100%; margin-top:8px; padding:12px; font-size:14px;">
+          <span>Sign In to Rail Account</span>
+          <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
         </button>
       </form>
 
       <!-- Quick Demo Account Pills -->
-      <div style="background:var(--canvas-subtle); border:1px solid var(--border); border-radius:var(--radius-md); padding:14px; margin-top:20px; font-size:11px;">
-        <strong style="color:var(--ink); display:block; margin-bottom:6px; text-transform:uppercase;">Quick-Fill Demo Accounts:</strong>
-        <div style="display:flex; gap:6px;">
-          <button type="button" onclick="fillAccount('passenger@bharatrail.in', 'Passenger@123')" class="btn-signin" style="padding:4px 8px; font-size:11px;">
+      <div style="background:var(--bg-light-blue); border:1px solid var(--border); border-radius:var(--radius-md); padding:14px; margin-top:20px; font-size:11px;">
+        <strong style="color:var(--ink); display:block; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.04em;">Quick-Fill Demo Credentials:</strong>
+        <div style="display:flex; gap:8px;">
+          <button type="button" onclick="fillAccount('passenger@bharatrail.in', 'Passenger@123')" class="btn-signin" style="padding:5px 10px; font-size:11px; background:#FFFFFF; flex:1; justify-content:center;">
             Passenger
           </button>
-          <button type="button" onclick="fillAccount('admin@bharatrail.gov.in', 'Admin@12345')" class="btn-signin" style="padding:4px 8px; font-size:11px; color:var(--primary);">
-            Admin
+          <button type="button" onclick="fillAccount('admin@bharatrail.gov.in', 'Admin@12345')" class="btn-signin" style="padding:5px 10px; font-size:11px; background:#FFFFFF; color:var(--rail-blue); border-color:var(--rail-blue); flex:1; justify-content:center;">
+            Admin Auditor
           </button>
         </div>
       </div>
 
-      <div style="text-align:center; font-size:12px; color:var(--ink-muted); margin-top:20px;">
+      <div style="text-align:center; font-size:12px; color:var(--ink-secondary); margin-top:22px;">
         Don't have a railway account? 
-        <a href="register.html" style="color:var(--primary); font-weight:700;">Register New User</a>
+        <a href="register.html" style="color:var(--rail-blue); font-weight:800; text-decoration:none;">Register New User</a>
       </div>
 
     </div>
 
-    <div style="text-align:center; margin-top:16px; font-size:11px; color:var(--ink-muted);">
-      <a href="index.html" style="color:var(--ink-secondary); font-weight:600;">← Back to Home</a>
+    <div style="text-align:center; margin-top:20px; font-size:12px; color:var(--ink-secondary);">
+      <a href="index.html" style="color:var(--rail-blue); font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+        <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
+        <span>Back to Reservation Home</span>
+      </a>
     </div>
 
   </div>
 
   <script>
+    if (window.lucide) window.lucide.createIcons();
     function fillAccount(email, pass) {
       document.getElementById('loginEmail').value = email;
       document.getElementById('loginPassword').value = pass;
