@@ -37,7 +37,7 @@ const MIME_TYPES = {
   '.ttf': 'font/ttf'
 };
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   // Parse URL & query parameters
   const reqUrl = new URL(req.url, `http://localhost:${PORT}`);
   let pathname = decodeURIComponent(reqUrl.pathname);
@@ -75,7 +75,9 @@ const server = http.createServer((req, res) => {
       BHARAT_TRAINS.find(t => t.number.toLowerCase() === requestedTrainNumber.toLowerCase() ||
         t.name.toLowerCase() === requestedTrainNumber.toLowerCase());
 
-    if (!train) {
+    const queryTrain = train || (/^\d{4,5}$/.test(requestedTrainNumber) ? { number: requestedTrainNumber, name: `Train ${requestedTrainNumber}` } : null);
+
+    if (!queryTrain) {
       res.writeHead(404, {
         'Content-Type': 'application/json; charset=utf-8',
         ...corsHeaders
@@ -90,7 +92,7 @@ const server = http.createServer((req, res) => {
     }
 
     try {
-      const liveStatus = NTESLiveStatusProvider.getLiveStatus(train, journeyDate);
+      const liveStatus = await NTESLiveStatusProvider.getLiveStatus(queryTrain, journeyDate);
       res.writeHead(200, {
         'Content-Type': 'application/json; charset=utf-8',
         'Cache-Control': 'public, max-age=30',
@@ -104,7 +106,7 @@ const server = http.createServer((req, res) => {
       });
       res.end(JSON.stringify({
         error: 'LIVE_TELEMETRY_ERROR',
-        message: 'An error occurred while calculating running checkpoints.',
+        message: 'An error occurred while fetching real-time telemetry from official NTES.',
         details: err.message
       }));
     }
