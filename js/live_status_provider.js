@@ -170,28 +170,66 @@
     const totalDistance = (train && train.distance) ? train.distance : 1000;
 
     // Check if HTML is empty, error page, or train has no running data for that date
-    if (!rawHtml || rawHtml.length < 500) {
+    if (!rawHtml || rawHtml.length < 500 || /does not run on|Train not found/i.test(rawHtml)) {
+      const isNotRunning = /does not run on/i.test(rawHtml || '');
       return {
         trainNumber: trainNo,
         trainName: trainName,
         trainType: trainType,
         startDate: journeyDateStr,
+        journeyDate: journeyDateStr,
         status: 'UNAVAILABLE',
-        statusReason: 'NO_NTES_TELEMETRY',
-        statusMessage: `Live running status is currently not available from official NTES for Train #${trainNo} on ${ntesDate || journeyDateStr}. Train may not operate on this date or NTES live data is unavailable.`,
-        source: 'OFFICIAL_NTES_CRIS',
+        statusReason: isNotRunning ? 'TRAIN_NOT_RUNNING' : 'SOURCE_NO_DATA',
+        runningStatus: 'UNAVAILABLE',
+        statusMessage: isNotRunning
+          ? `Train #${trainNo} does not run on ${ntesDate || journeyDateStr} or has no operational run scheduled on this date.`
+          : `Live running status is currently not available from official NTES for Train #${trainNo} on ${ntesDate || journeyDateStr}. Train may not operate on this date or NTES live data is unavailable.`,
+        source: 'NTES',
+        sourceUpdatedAt: null,
+        sourceTimestamp: null,
+        retrievedAt: getISTNow().toISOString(),
         delayMinutes: 0,
+        aheadMinutes: 0,
+        isDelayed: false,
+        isAhead: false,
+        isOnTime: false,
+        isAtStation: false,
+        isBetweenStations: false,
+        diverted: false,
+        partiallyCancelled: false,
+        cancelled: false,
+        rescheduled: false,
         currentLocationDescription: null,
         lastPassedStation: null,
+        lastReportedStation: null,
+        lastReportedStationCode: '',
         nextStation: null,
+        nextStationCode: '',
         currentStation: null,
+        currentStationCode: '',
         originStation: (train && train.source) ? { code: train.source.code, name: train.source.name } : null,
         destinationStation: (train && train.destination) ? { code: train.destination.code, name: train.destination.name } : null,
         totalDistanceKm: totalDistance,
         distanceCoveredKm: 0,
         progressPercentage: 0,
-        lastUpdatedAt: getISTNow().toISOString(),
-        stations: []
+        lastUpdated: null,
+        lastUpdatedAt: null,
+        staleData: false,
+        staleMinutes: 0,
+        stations: [],
+        diagnostics: {
+          trainNumber: trainNo,
+          journeyDate: journeyDateStr,
+          source: 'NTES',
+          sourceHostname: 'enquiry.indianrail.gov.in',
+          sourcePath: '/mntes/tr',
+          sourceHttpStatus: 200,
+          sourceTimestamp: null,
+          sourceUpdatedAt: null,
+          retrievedAt: getISTNow().toISOString(),
+          parserStatus: isNotRunning ? 'TRAIN_NOT_RUNNING' : 'SOURCE_NO_DATA',
+          errorClassification: isNotRunning ? 'TRAIN_NOT_RUNNING' : 'SOURCE_NO_DATA'
+        }
       };
     }
 
@@ -461,9 +499,11 @@
       startDate: journeyDateStr,
       journeyDate: journeyDateStr,
       status: overallStatus,
+      statusReason: overallStatus === 'UNAVAILABLE' ? 'NO_NTES_TELEMETRY' : 'SOURCE_SUCCESS',
       delayMinutes: delayMinutes,
       aheadMinutes: 0,
       runningStatus: runningStatus,
+      runningState: isAtStation ? 'At Station' : (isBetweenStations ? 'Running Between Stations' : (overallStatus === 'COMPLETED' ? 'Destination Reached' : (overallStatus === 'NOT_STARTED' ? 'Yet To Start' : overallStatus))),
       movementState: movementState,
       isDelayed: delayMinutes > 15,
       isAhead: false,
@@ -493,15 +533,29 @@
       distanceCoveredKm: coveredKm,
       progressPercentage: progressPct,
       statusMessage: bannerText || `Train #${trainNo} is currently ${overallStatus}.`,
-      lastUpdated: updatedOn || getISTNow().toISOString(),
-      lastUpdatedAt: updatedOn || getISTNow().toISOString(),
+      lastUpdated: updatedOn || null,
+      lastUpdatedAt: updatedOn || null,
       source: 'NTES',
-      sourceTimestamp: updatedOn || getISTNow().toISOString(),
+      sourceUpdatedAt: updatedOn || null,
+      sourceTimestamp: updatedOn || null,
       retrievedAt: getISTNow().toISOString(),
       staleData: false,
       staleMinutes: 0,
       cacheRefreshIntervalMs: LIVE_STATUS_REFRESH_INTERVAL_MS,
-      stations: stations
+      stations: stations,
+      diagnostics: {
+        trainNumber: trainNo,
+        journeyDate: journeyDateStr,
+        source: 'NTES',
+        sourceHostname: 'enquiry.indianrail.gov.in',
+        sourcePath: '/mntes/tr',
+        sourceHttpStatus: 200,
+        sourceTimestamp: updatedOn || null,
+        sourceUpdatedAt: updatedOn || null,
+        retrievedAt: getISTNow().toISOString(),
+        parserStatus: stations.length > 0 ? 'SUCCESS' : 'NO_STOPPAGES_PARSED',
+        errorClassification: 'SOURCE_SUCCESS'
+      }
     };
   }
 
@@ -599,30 +653,69 @@
       return { ...parsed, cached: false };
 
     } catch (err) {
-      // If NTES network request fails, return UNAVAILABLE without faking!
+      // If NTES network request fails, return UNAVAILABLE with genuine error reason (never fake!)
+      const isTimeout = /timed? out/i.test(err.message || '');
+      const statusReason = isTimeout ? 'SOURCE_TIMEOUT' : 'SOURCE_NETWORK_ERROR';
       const unavailablePayload = {
         trainNumber: trainNo,
         trainName: trainRecord ? trainRecord.name : `Train ${trainNo}`,
         trainType: trainRecord ? trainRecord.type : 'EXPRESS',
         startDate: dateStr,
+        journeyDate: dateStr,
         status: 'UNAVAILABLE',
-        statusReason: 'NTES_NETWORK_ERROR',
-        statusMessage: `Live running status is temporarily unavailable from official CRIS NTES (${err.message}). No synthetic estimates are shown. Please retry in a few seconds.`,
+        statusReason: statusReason,
+        runningStatus: 'UNAVAILABLE',
+        runningState: 'Telemetry Unavailable',
+        statusMessage: isTimeout
+          ? 'Live telemetry request to official CRIS NTES timed out. No synthetic estimates are shown.'
+          : `Live running status is temporarily unavailable from official CRIS NTES (${err.message}). No synthetic estimates are shown. Please retry in a few seconds.`,
         source: 'NTES',
-        sourceTimestamp: getISTNow().toISOString(),
+        sourceUpdatedAt: null,
+        sourceTimestamp: null,
         retrievedAt: getISTNow().toISOString(),
         delayMinutes: 0,
+        aheadMinutes: 0,
+        isDelayed: false,
+        isAhead: false,
+        isOnTime: false,
+        isAtStation: false,
+        isBetweenStations: false,
+        diverted: false,
+        partiallyCancelled: false,
+        cancelled: false,
+        rescheduled: false,
         currentLocationDescription: null,
         lastPassedStation: null,
+        lastReportedStation: null,
+        lastReportedStationCode: '',
         nextStation: null,
+        nextStationCode: '',
         currentStation: null,
+        currentStationCode: '',
         originStation: (trainRecord && trainRecord.source) ? { code: trainRecord.source.code, name: trainRecord.source.name } : null,
         destinationStation: (trainRecord && trainRecord.destination) ? { code: trainRecord.destination.code, name: trainRecord.destination.name } : null,
         totalDistanceKm: trainRecord ? trainRecord.distance : 0,
         distanceCoveredKm: 0,
         progressPercentage: 0,
-        lastUpdatedAt: getISTNow().toISOString(),
-        stations: []
+        lastUpdated: null,
+        lastUpdatedAt: null,
+        staleData: false,
+        staleMinutes: 0,
+        stations: [],
+        diagnostics: {
+          trainNumber: trainNo,
+          journeyDate: dateStr,
+          source: 'NTES',
+          sourceHostname: 'enquiry.indianrail.gov.in',
+          sourcePath: '/mntes/tr',
+          sourceHttpStatus: null,
+          sourceError: err.message,
+          sourceTimestamp: null,
+          sourceUpdatedAt: null,
+          retrievedAt: getISTNow().toISOString(),
+          parserStatus: 'NETWORK_FAILED',
+          errorClassification: statusReason
+        }
       };
       return unavailablePayload;
     }

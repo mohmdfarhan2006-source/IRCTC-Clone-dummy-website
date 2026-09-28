@@ -1689,6 +1689,11 @@ const BHARATRAIL_API_CONFIG = {
       } catch (e) {}
 
       const host = window.location.hostname;
+      // If deployed on Vercel or Render where API is co-hosted with frontend
+      if (host.endsWith('vercel.app') || host.endsWith('onrender.com')) {
+        return window.location.origin;
+      }
+
       const isLocal = host === 'localhost' || host === '127.0.0.1' || host === '';
       if (isLocal) {
         return (window.location.port === '3000') ? '' : 'http://localhost:3000';
@@ -1704,9 +1709,12 @@ const RailwayLiveStatusService = {
     const cleanNum = trainNumber.trim();
     const cleanDate = date || (typeof NTESLiveStatusProvider !== 'undefined' ? NTESLiveStatusProvider.getTodayISTDateString() : new Date().toISOString().split('T')[0]);
 
-    // 1. Try querying backend /api/trains/:trainNumber/live-status
+    // 1. Query live telemetry backend
     const baseUrl = BHARATRAIL_API_CONFIG.getApiBaseUrl();
     const endpoint = `${baseUrl}/api/trains/${encodeURIComponent(cleanNum)}/live-status?date=${encodeURIComponent(cleanDate)}`;
+
+    let networkError = null;
+    let httpStatusCode = null;
 
     try {
       const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
@@ -1716,12 +1724,15 @@ const RailwayLiveStatusService = {
         signal: controller ? controller.signal : undefined
       });
       if (timeoutId) clearTimeout(timeoutId);
+      httpStatusCode = resp.status;
       if (resp.ok) {
         const data = await resp.json();
         return data;
+      } else {
+        networkError = `Gateway returned HTTP ${resp.status} ${resp.statusText || ''}`.trim();
       }
     } catch (e) {
-      // Backend not reachable or request timed out
+      networkError = (e && e.name === 'AbortError') ? 'Connection timed out after 12s' : (e.message || 'Network connection failed');
     }
 
     // 2. If running locally with Node provider available in memory:
@@ -1738,6 +1749,20 @@ const RailwayLiveStatusService = {
       ? BHARAT_TRAINS.find(t => t.number.toLowerCase() === cleanNum.toLowerCase() || t.name.toLowerCase().includes(cleanNum.toLowerCase()))
       : null;
 
+    // Determine actual failure classification (Section 4 & 5 & 32: Do NOT classify all failures as NTES no signal!)
+    let classifiedReason = 'BACKEND_UNREACHABLE';
+    let userMsg = 'Live railway telemetry is currently unavailable from the production gateway.';
+    if (httpStatusCode === 404) {
+      classifiedReason = 'BACKEND_NOT_FOUND';
+      userMsg = `Live telemetry backend service not reachable at ${baseUrl} (HTTP 404).`;
+    } else if (httpStatusCode >= 500) {
+      classifiedReason = 'BACKEND_ERROR';
+      userMsg = `Live telemetry gateway encountered an internal error (HTTP ${httpStatusCode}).`;
+    } else if (networkError && networkError.includes('timed out')) {
+      classifiedReason = 'BACKEND_TIMEOUT';
+      userMsg = `Live telemetry gateway request timed out.`;
+    }
+
     // Production honest fallback: NEVER calculate live position from timetable!
     return {
       trainNumber: staticTrain ? staticTrain.number : cleanNum,
@@ -1746,14 +1771,18 @@ const RailwayLiveStatusService = {
       startDate: cleanDate,
       journeyDate: cleanDate,
       status: 'UNAVAILABLE',
-      statusReason: 'LIVE_SIGNAL_UNAVAILABLE',
-      statusMessage: 'Live status temporarily unavailable from official NTES gateway. No current live signal available.',
+      statusReason: classifiedReason,
+      statusMessage: userMsg,
+      errorDetails: networkError,
+      targetEndpoint: endpoint,
       source: 'NTES',
-      sourceTimestamp: new Date().toISOString(),
+      sourceUpdatedAt: null,
+      sourceTimestamp: null,
       retrievedAt: new Date().toISOString(),
       delayMinutes: 0,
       aheadMinutes: 0,
       runningStatus: 'UNAVAILABLE',
+      runningState: 'Gateway Offline',
       isDelayed: false,
       isAhead: false,
       isOnTime: false,
@@ -1779,7 +1808,16 @@ const RailwayLiveStatusService = {
       totalDistanceKm: staticTrain ? staticTrain.distance : 0,
       distanceCoveredKm: 0,
       progressPercentage: 0,
-      lastUpdatedAt: new Date().toISOString(),
+      lastUpdatedAt: null,
+      diagnostics: {
+        trainNumber: cleanNum,
+        journeyDate: cleanDate,
+        targetEndpoint: endpoint,
+        httpStatusCode: httpStatusCode,
+        errorClassification: classifiedReason,
+        errorDetails: networkError,
+        retrievedAt: new Date().toISOString()
+      },
       stations: (staticTrain && staticTrain.route) ? staticTrain.route.map((s, idx) => ({
         sequence: idx + 1,
         code: s.code,
@@ -1945,11 +1983,20 @@ function initLiveStatusPage() {
           </div>
 
           <div style="text-align:right;">
-            <span class="avl-status-tag ${statusClass}" style="font-size:12px; padding:6px 14px; font-weight:800; letter-spacing:0.02em;">
-              ${statusLabel}
-            </span>
+            <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+              <span class="avl-status-tag ${statusClass}" style="font-size:12px; padding:6px 14px; font-weight:800; letter-spacing:0.02em;">
+                ${statusLabel}
+              </span>
+              <button id="liveManualRefreshBtn" type="button" class="btn-signin" style="padding:5px 10px; font-size:11px; display:inline-flex; align-items:center; gap:4px; background:#FFFFFF; cursor:pointer;" title="Refresh live telemetry from NTES">
+                <i data-lucide="refresh-cw" style="width:12px;height:12px;"></i>
+                <span>Refresh</span>
+              </button>
+            </div>
             <div style="font-size:11px; color:var(--ink-muted); margin-top:5px;" class="mono">
-              NTES Telemetry: ${updatedTime}
+              ${data.sourceUpdatedAt ? 'NTES Source: ' + data.sourceUpdatedAt : (isUnavailable ? 'NTES Source: Telemetry Unavailable' : 'NTES Source: Time not reported')}
+            </div>
+            <div style="font-size:10px; color:var(--ink-muted);" class="mono">
+              Retrieved: ${data.retrievedAt ? new Date(data.retrievedAt).toLocaleTimeString() : 'N/A'}
             </div>
           </div>
         </div>
@@ -1976,8 +2023,9 @@ function initLiveStatusPage() {
             ${data.currentLocationDescription || data.statusMessage}
           </div>
           <div style="font-size:11px; color:${isUnavailable ? '#b91c1c' : (data.cancelled || data.diverted ? '#c2410c' : '#15803d')}; margin-top:2px;">
-            Telemetry Source: Official CRIS / NTES Running Telemetry &bull; ${isUnavailable ? 'No synthetic estimates shown' : 'Schedule Margin: ' + delayDisplay}
-            ${data.staleData ? ` &bull; <strong style="color:#b91c1c;">(Last live update: ${data.staleMinutes} mins ago)</strong>` : ''}
+            ${isUnavailable
+              ? `Diagnostic Classification: <strong>${data.statusReason || 'LIVE_UNAVAILABLE'}</strong>${data.errorDetails ? ' &bull; ' + data.errorDetails : ''} &bull; Official CRIS NTES Protocol`
+              : `Telemetry Source: Official CRIS / NTES Running Telemetry &bull; Schedule Margin: ${delayDisplay}${data.staleData ? ' &bull; (Last live update: ' + data.staleMinutes + 'm ago)' : ''}`}
           </div>
         </div>
       </div>
@@ -2102,6 +2150,13 @@ function initLiveStatusPage() {
 
     if (window.lucide) {
       window.lucide.createIcons();
+    }
+
+    const refreshBtn = document.getElementById('liveManualRefreshBtn');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', () => {
+        trackAndRenderTrain(data.trainNumber, data.startDate || data.journeyDate);
+      });
     }
   }
 

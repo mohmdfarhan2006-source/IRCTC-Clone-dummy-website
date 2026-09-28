@@ -115,14 +115,52 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Health Endpoint: GET /api/health
-  if (pathname === '/api/health') {
+  // Health Endpoints: GET /health or GET /api/health (Distinguish BACKEND HEALTHY from LIVE SOURCE HEALTHY)
+  if (pathname === '/api/health' || pathname === '/health') {
+    let sourceStatus = 'UNKNOWN';
+    let sourceLatencyMs = null;
+    let sourceError = null;
+
+    try {
+      const https = require('https');
+      const t0 = Date.now();
+      await new Promise((resolve) => {
+        const probeReq = https.get('https://enquiry.indianrail.gov.in/mntes/', {
+          timeout: 4000,
+          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
+        }, (probeRes) => {
+          sourceLatencyMs = Date.now() - t0;
+          sourceStatus = (probeRes.statusCode >= 200 && probeRes.statusCode < 400) ? 'HEALTHY' : `HTTP_${probeRes.statusCode}`;
+          probeRes.resume();
+          resolve();
+        });
+        probeReq.on('timeout', () => {
+          probeReq.destroy();
+          sourceStatus = 'SOURCE_TIMEOUT';
+          sourceError = 'Connection to official NTES gateway timed out (4s)';
+          resolve();
+        });
+        probeReq.on('error', (e) => {
+          sourceStatus = 'SOURCE_UNAVAILABLE';
+          sourceError = e.message;
+          resolve();
+        });
+      });
+    } catch (e) {
+      sourceStatus = 'SOURCE_UNAVAILABLE';
+      sourceError = e.message;
+    }
+
     res.writeHead(200, {
       'Content-Type': 'application/json; charset=utf-8',
       ...corsHeaders
     });
     res.end(JSON.stringify({
       status: 'UP',
+      backend: 'HEALTHY',
+      liveSource: sourceStatus,
+      sourceLatencyMs: sourceLatencyMs,
+      sourceError: sourceError,
       service: 'BharatRail Real-Time NTES Telemetry Gateway',
       totalCanonicalTrains: trainByNumber.size,
       serverTimeIST: new Date().toISOString(),
