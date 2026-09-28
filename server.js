@@ -42,11 +42,13 @@ const server = http.createServer(async (req, res) => {
   const reqUrl = new URL(req.url, `http://localhost:${PORT}`);
   let pathname = decodeURIComponent(reqUrl.pathname);
 
-  // Common CORS Headers
+  // Dynamic CORS Headers allowing GitHub Pages, custom domains, and local environments
+  const origin = req.headers['origin'] || '*';
   const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '86400'
   };
 
   if (req.method === 'OPTIONS') {

@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/api/trains/:train/live-status", "destination": "/api/live.js?train=:train" },
+    { "source": "/api/trains/live-status", "destination": "/api/live.js" },
+    { "source": "/api/health", "destination": "/api/health.js" }
+  ]
+}

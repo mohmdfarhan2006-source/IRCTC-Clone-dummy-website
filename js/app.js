@@ -1675,6 +1675,29 @@ function renderTrainDetail(query) {
 // ==========================================================================
 // 8. OFFICIAL NTES LIVE RUNNING STATUS (SPOT YOUR TRAIN)
 // ==========================================================================
+const BHARATRAIL_API_CONFIG = {
+  // Configured production live telemetry gateway URL
+  // Can be configured by user or environment via window.BHARATRAIL_API_URL or localStorage
+  DEFAULT_PROD_URL: 'https://bharatrail-live-telemetry.onrender.com',
+
+  getApiBaseUrl() {
+    if (typeof window !== 'undefined') {
+      if (window.BHARATRAIL_API_URL) return window.BHARATRAIL_API_URL.replace(/\/+$/, '');
+      try {
+        const stored = localStorage.getItem('bharatrail_live_api_url');
+        if (stored) return stored.replace(/\/+$/, '');
+      } catch (e) {}
+
+      const host = window.location.hostname;
+      const isLocal = host === 'localhost' || host === '127.0.0.1' || host === '';
+      if (isLocal) {
+        return (window.location.port === '3000') ? '' : 'http://localhost:3000';
+      }
+    }
+    return (this.DEFAULT_PROD_URL || '').replace(/\/+$/, '');
+  }
+};
+
 const RailwayLiveStatusService = {
   async fetchLiveStatus(trainNumber, date) {
     if (!trainNumber) return null;
@@ -1682,41 +1705,99 @@ const RailwayLiveStatusService = {
     const cleanDate = date || (typeof NTESLiveStatusProvider !== 'undefined' ? NTESLiveStatusProvider.getTodayISTDateString() : new Date().toISOString().split('T')[0]);
 
     // 1. Try querying backend /api/trains/:trainNumber/live-status
+    const baseUrl = BHARATRAIL_API_CONFIG.getApiBaseUrl();
+    const endpoint = `${baseUrl}/api/trains/${encodeURIComponent(cleanNum)}/live-status?date=${encodeURIComponent(cleanDate)}`;
+
     try {
-      const resp = await fetch(`/api/trains/${encodeURIComponent(cleanNum)}/live-status?date=${encodeURIComponent(cleanDate)}`);
+      const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      const timeoutId = controller ? setTimeout(() => controller.abort(), 12000) : null;
+      const resp = await fetch(endpoint, {
+        headers: { 'Accept': 'application/json' },
+        signal: controller ? controller.signal : undefined
+      });
+      if (timeoutId) clearTimeout(timeoutId);
       if (resp.ok) {
         const data = await resp.json();
         return data;
       }
     } catch (e) {
-      // Backend not reachable (e.g. file:// protocol or offline)
+      // Backend not reachable or request timed out
     }
 
-    // 2. Standalone fallback: report that backend server is needed for official NTES query
+    // 2. If running locally with Node provider available in memory:
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      if (typeof NTESLiveStatusProvider !== 'undefined' && typeof NTESLiveStatusProvider.getLiveStatus === 'function') {
+        try {
+          const localData = await NTESLiveStatusProvider.getLiveStatus(cleanNum, cleanDate);
+          if (localData) return localData;
+        } catch (e) {}
+      }
+    }
+
     const staticTrain = (typeof BHARAT_TRAINS !== 'undefined')
       ? BHARAT_TRAINS.find(t => t.number.toLowerCase() === cleanNum.toLowerCase() || t.name.toLowerCase().includes(cleanNum.toLowerCase()))
       : null;
 
+    // Production honest fallback: NEVER calculate live position from timetable!
     return {
       trainNumber: staticTrain ? staticTrain.number : cleanNum,
       trainName: staticTrain ? staticTrain.name : `Train ${cleanNum}`,
       trainType: staticTrain ? staticTrain.type : 'EXPRESS',
       startDate: cleanDate,
+      journeyDate: cleanDate,
       status: 'UNAVAILABLE',
-      statusMessage: 'To spot live Indian Railways trains via official CRIS NTES, please start the BharatRail server using "npm start" or "node server.js" (http://localhost:3000).',
-      source: 'OFFICIAL_NTES_CRIS',
+      statusReason: 'LIVE_SIGNAL_UNAVAILABLE',
+      statusMessage: 'Live status temporarily unavailable from official NTES gateway. No current live signal available.',
+      source: 'NTES',
+      sourceTimestamp: new Date().toISOString(),
+      retrievedAt: new Date().toISOString(),
       delayMinutes: 0,
-      currentLocationDescription: null,
-      lastPassedStation: null,
-      nextStation: null,
+      aheadMinutes: 0,
+      runningStatus: 'UNAVAILABLE',
+      isDelayed: false,
+      isAhead: false,
+      isOnTime: false,
+      isAtStation: false,
+      isBetweenStations: false,
+      diverted: false,
+      partiallyCancelled: false,
+      cancelled: false,
+      rescheduled: false,
       currentStation: null,
-      originStation: staticTrain ? { code: staticTrain.source.code, name: staticTrain.source.name } : null,
-      destinationStation: staticTrain ? { code: staticTrain.destination.code, name: staticTrain.destination.name } : null,
+      currentStationCode: '',
+      lastReportedStation: null,
+      lastReportedStationCode: '',
+      currentLocationDescription: null,
+      nextStation: null,
+      nextStationCode: '',
+      actualArrival: '',
+      actualDeparture: '',
+      expectedArrival: '',
+      expectedDeparture: '',
+      originStation: staticTrain ? { code: staticTrain.source.code, name: staticTrain.source.name, departure: staticTrain.departure } : null,
+      destinationStation: staticTrain ? { code: staticTrain.destination.code, name: staticTrain.destination.name, arrival: staticTrain.arrival } : null,
       totalDistanceKm: staticTrain ? staticTrain.distance : 0,
       distanceCoveredKm: 0,
       progressPercentage: 0,
       lastUpdatedAt: new Date().toISOString(),
-      stations: []
+      stations: (staticTrain && staticTrain.route) ? staticTrain.route.map((s, idx) => ({
+        sequence: idx + 1,
+        code: s.code,
+        name: s.name,
+        platform: s.platform || '1',
+        distance: s.distance || 0,
+        day: s.day || 1,
+        scheduledArrival: s.arrival || '--:--',
+        scheduledDeparture: s.departure || '--:--',
+        actualArrival: '--:--',
+        actualDeparture: '--:--',
+        expectedArrival: '--:--',
+        expectedDeparture: '--:--',
+        arrivalDelay: 0,
+        departureDelay: '',
+        status: 'UPCOMING',
+        isScheduledOnly: true
+      })) : []
     };
   }
 };
@@ -1737,10 +1818,16 @@ function initLiveStatusPage() {
     liveDate.value = todayStr;
   }
 
-  // Check URL parameters: e.g. ?train=20801&date=2026-09-28
+  // Check URL parameters: e.g. ?train=20801&date=2026-09-28&api=https://my-backend.com
   const urlParams = new URLSearchParams(window.location.search);
   const qTrain = urlParams.get('train') || urlParams.get('q');
   const qDate = urlParams.get('date');
+  const qApi = urlParams.get('api') || urlParams.get('backend');
+  if (qApi) {
+    try {
+      localStorage.setItem('bharatrail_live_api_url', qApi.replace(/\/+$/, ''));
+    } catch (e) {}
+  }
   if (qTrain && liveInput) {
     liveInput.value = qTrain;
   }
@@ -1804,7 +1891,19 @@ function initLiveStatusPage() {
     if (isUnavailable) {
       statusClass = 'regret';
       statusLabel = 'LIVE STATUS UNAVAILABLE';
-    } else if (data.status === 'DELAYED' || (data.delayMinutes && data.delayMinutes > 15)) {
+    } else if (data.cancelled) {
+      statusClass = 'regret';
+      statusLabel = 'CANCELLED';
+    } else if (data.diverted) {
+      statusClass = 'regret';
+      statusLabel = 'DIVERTED';
+    } else if (data.rescheduled) {
+      statusClass = 'wl';
+      statusLabel = 'RESCHEDULED';
+    } else if (data.isAhead && data.aheadMinutes > 0) {
+      statusClass = 'available';
+      statusLabel = `AHEAD ${data.aheadMinutes}M`;
+    } else if (data.delayMinutes > 15) {
       statusClass = 'regret';
       statusLabel = `DELAYED ${data.delayMinutes}M`;
     } else if (data.status === 'NOT_STARTED') {
@@ -1813,12 +1912,6 @@ function initLiveStatusPage() {
     } else if (data.status === 'COMPLETED') {
       statusClass = 'available';
       statusLabel = 'JOURNEY COMPLETED';
-    } else if (data.status === 'CANCELLED') {
-      statusClass = 'regret';
-      statusLabel = 'CANCELLED';
-    } else if (data.status === 'RESCHEDULED') {
-      statusClass = 'wl';
-      statusLabel = 'RENUMBERED';
     }
 
     const updatedTime = (data.lastUpdatedAt && !isNaN(new Date(data.lastUpdatedAt).getTime()))
@@ -1827,6 +1920,14 @@ function initLiveStatusPage() {
 
     const origName = data.originStation ? `${data.originStation.name} (${data.originStation.code})` : 'Origin';
     const destName = data.destinationStation ? `${data.destinationStation.name} (${data.destinationStation.code})` : 'Destination';
+
+    // Real delay text
+    let delayDisplay = 'On Schedule (Right Time)';
+    if (data.delayMinutes > 0) {
+      delayDisplay = `+${data.delayMinutes} min late`;
+    } else if (data.aheadMinutes > 0) {
+      delayDisplay = `${data.aheadMinutes} min ahead`;
+    }
 
     liveContainer.innerHTML = `
       <div class="card-header" style="background:#FFFFFF; border-bottom:1px solid var(--border); padding:18px 24px;">
@@ -1838,7 +1939,7 @@ function initLiveStatusPage() {
               <span class="train-type-pill" style="font-size:10px;">${(data.trainType || 'EXPRESS').replace(/_/g, ' ')}</span>
             </div>
             <p style="font-size:12px; color:var(--ink-secondary); margin-top:4px;">
-              ${origName} ➔ ${destName} • Journey Date: <strong>${data.startDate}</strong>
+              ${origName} ➔ ${destName} • Journey Date: <strong>${data.startDate || data.journeyDate}</strong>
             </p>
             ${data.currentTrainNumber ? `<div style="font-size:11px; color:#b91c1c; font-weight:700; margin-top:3px;">Historical Train #${data.trainNumber} &bull; Renumbered to #${data.currentTrainNumber}</div>` : ''}
           </div>
@@ -1866,82 +1967,86 @@ function initLiveStatusPage() {
       </div>
 
       <!-- Real-Time Telemetry Message Banner -->
-      <div style="padding:14px 24px; background:${isUnavailable ? '#fef2f2' : '#f0fdf4'}; border-bottom:1px solid ${isUnavailable ? '#fecaca' : '#bbf7d0'}; display:flex; align-items:center; gap:12px;">
-        <div style="width:32px; height:32px; border-radius:50%; background:${isUnavailable ? '#fee2e2' : '#dcfce7'}; color:${isUnavailable ? '#dc2626' : '#15803d'}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+      <div style="padding:14px 24px; background:${isUnavailable ? '#fef2f2' : (data.cancelled || data.diverted ? '#fff7ed' : '#f0fdf4')}; border-bottom:1px solid ${isUnavailable ? '#fecaca' : (data.cancelled || data.diverted ? '#fed7aa' : '#bbf7d0')}; display:flex; align-items:center; gap:12px;">
+        <div style="width:32px; height:32px; border-radius:50%; background:${isUnavailable ? '#fee2e2' : (data.cancelled || data.diverted ? '#ffedd5' : '#dcfce7')}; color:${isUnavailable ? '#dc2626' : (data.cancelled || data.diverted ? '#c2410c' : '#15803d')}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
           <i data-lucide="${isUnavailable ? 'alert-circle' : 'navigation'}" style="width:16px;height:16px;"></i>
         </div>
         <div style="flex:1;">
-          <div style="font-size:13px; font-weight:800; color:${isUnavailable ? '#991b1b' : '#166534'};">
-            ${data.statusMessage}
+          <div style="font-size:13px; font-weight:800; color:${isUnavailable ? '#991b1b' : (data.cancelled || data.diverted ? '#9a3412' : '#166534')};">
+            ${data.currentLocationDescription || data.statusMessage}
           </div>
-          <div style="font-size:11px; color:${isUnavailable ? '#b91c1c' : '#15803d'}; margin-top:2px;">
-            Telemetry Source: Official CRIS / NTES Running Telemetry &bull; ${isUnavailable ? 'No synthetic estimates shown' : 'Delay Margin: ' + (data.delayMinutes > 0 ? '+' + data.delayMinutes + ' mins' : 'Right Time')}
+          <div style="font-size:11px; color:${isUnavailable ? '#b91c1c' : (data.cancelled || data.diverted ? '#c2410c' : '#15803d')}; margin-top:2px;">
+            Telemetry Source: Official CRIS / NTES Running Telemetry &bull; ${isUnavailable ? 'No synthetic estimates shown' : 'Schedule Margin: ' + delayDisplay}
+            ${data.staleData ? ` &bull; <strong style="color:#b91c1c;">(Last live update: ${data.staleMinutes} mins ago)</strong>` : ''}
           </div>
         </div>
       </div>
 
-      <!-- 4-Metric Checkpoint Summary Grid -->
+      <!-- 4-Metric Checkpoint Summary Grid (Section 4, 6, 7, 8) -->
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; padding:18px 24px; background:#FFFFFF; border-bottom:1px solid var(--border);">
         <div style="background:var(--bg-light-blue); padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--border);">
-          <span style="font-size:10px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase;">Last Reported Station</span>
+          <span style="font-size:10px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase;">Current / Last Reported Location</span>
           <strong style="display:block; font-size:13px; color:var(--ink); margin-top:3px;">
-            ${data.lastPassedStation ? data.lastPassedStation.name + (data.lastPassedStation.code ? ' (' + data.lastPassedStation.code + ')' : '') : (isUnavailable ? 'Unavailable' : origName)}
+            ${data.lastReportedStation ? data.lastReportedStation.name + (data.lastReportedStation.code ? ' (' + data.lastReportedStation.code + ')' : '') : (isUnavailable ? 'Unavailable' : origName)}
           </strong>
           <span style="font-size:11px; color:var(--ink-muted);" class="mono">
-            ${data.lastPassedStation ? 'Departed ' + (data.lastPassedStation.passedAt || '') : (isUnavailable ? '--' : 'Scheduled ' + (data.originStation?.departure || '--:--'))}
+            ${data.isAtStation ? 'Halted at station' : (data.lastReportedStation ? 'Departed ' + (data.lastReportedStation.passedAt || '') : (isUnavailable ? '--' : 'Scheduled ' + (data.originStation?.departure || '--:--')))}
           </span>
         </div>
 
         <div style="background:var(--bg-light-blue); padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--border);">
-          <span style="font-size:10px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase;">Next Expected Station</span>
+          <span style="font-size:10px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase;">Running State & Next Halt</span>
           <strong style="display:block; font-size:13px; color:var(--rail-blue); margin-top:3px;">
-            ${data.nextStation ? data.nextStation.name + (data.nextStation.code ? ' (' + data.nextStation.code + ')' : '') : (data.status === 'COMPLETED' ? 'Destination Reached' : (isUnavailable ? 'Unavailable' : '--'))}
+            ${data.isAtStation ? 'Halted At Station' : (data.isBetweenStations ? 'Running Between Stations' : (data.status === 'COMPLETED' ? 'Destination Reached' : (isUnavailable ? 'Unavailable' : data.status)))}
           </strong>
           <span style="font-size:11px; color:var(--ink-muted);" class="mono">
-            ${data.nextStation ? (data.nextStation.distanceKm > 0 ? 'Distance: ' + data.nextStation.distanceKm + ' km' : 'En route') : (isUnavailable ? '--' : 'Terminus')}
+            ${data.nextStation ? 'Next: ' + data.nextStation.name + (data.nextStation.code ? ' (' + data.nextStation.code + ')' : '') : (data.status === 'COMPLETED' ? 'Journey Completed' : '--')}
           </span>
         </div>
 
         <div style="background:var(--bg-light-blue); padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--border);">
-          <span style="font-size:10px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase;">Expected Arrival (ETA)</span>
-          <strong style="display:block; font-size:14px; color:var(--ink); margin-top:2px;" class="mono">
-            ${data.nextStation ? data.nextStation.eta : '--:--'}
+          <span style="font-size:10px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase;">Live Delay / Ahead Margin</span>
+          <strong style="display:block; font-size:14px; color:${data.delayMinutes > 15 ? 'var(--rail-red)' : 'var(--status-avl-text)'}; margin-top:2px;" class="mono">
+            ${isUnavailable ? '--' : delayDisplay}
           </strong>
-          <span style="font-size:11px; color:${data.delayMinutes > 10 ? 'var(--rail-red)' : 'var(--status-avl-text)'}; font-weight:700;">
-            ${isUnavailable ? 'No live signal' : (data.delayMinutes > 0 ? '+' + data.delayMinutes + ' mins delay' : 'On Schedule')}
+          <span style="font-size:11px; color:var(--ink-muted);">
+            ${data.nextStation?.eta ? 'ETA at next: ' + data.nextStation.eta : (isUnavailable ? 'No live telemetry' : 'NTES track control')}
           </span>
         </div>
 
         <div style="background:var(--bg-light-blue); padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--border);">
           <span style="font-size:10px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase;">Expected Platform</span>
           <strong style="display:block; font-size:14px; color:var(--rail-navy); margin-top:2px;">
-            ${data.currentStation ? 'Platform ' + (data.currentStation.platform || '1') : (data.nextStation ? 'Platform ' + (data.stations.find(s=>s.code===data.nextStation.code)?.platform || '1') : (isUnavailable ? '--' : 'Platform 1'))}
+            ${data.currentStation ? 'Platform ' + (data.currentStation.platform || '1') : (data.nextStation ? 'Expected PF ' + (data.stations.find(s=>s.code===data.nextStation.code)?.platform || '1') : (isUnavailable ? '--' : 'Platform 1'))}
           </strong>
           <span style="font-size:11px; color:var(--ink-muted);">${isUnavailable ? 'Awaiting yard allocation' : 'Live yard operational clearance'}</span>
         </div>
       </div>
 
-      <!-- Station Checkpoint Timeline -->
+      <!-- Station Checkpoint Timeline (Section 9: Clear Scheduled vs Live separation!) -->
       <div style="padding:22px 24px; background:#FFFFFF;">
         <h4 style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--ink-secondary); margin-bottom:16px; letter-spacing:0.04em;">
-          En-Route Official NTES Station Checkpoints (${data.stations ? data.stations.length : 0} Stoppages)
+          ${isUnavailable ? `Scheduled Timetable (${data.stations ? data.stations.length : 0} Stoppages — Reference Only)` : `En-Route Official NTES Station Checkpoints (${data.stations ? data.stations.length : 0} Stoppages)`}
         </h4>
 
         ${(!data.stations || data.stations.length === 0) ? `
           <div style="padding:24px; text-align:center; color:var(--ink-secondary); background:var(--bg-light-blue); border-radius:var(--radius-sm); border:1px solid var(--border);">
-            <p style="font-size:12px; margin:0;">${isUnavailable ? 'Live stoppage checkpoints unavailable from official NTES for this train date.' : 'No intermediate stoppage checkpoints reported.'}</p>
+            <p style="font-size:12px; margin:0;">Live stoppage checkpoints unavailable from official NTES for this train date.</p>
           </div>
         ` : `
           <div class="stoppage-timeline">
             ${data.stations.map((s, idx) => {
               const isPassed = s.status === 'PASSED';
               const isCurrent = s.status === 'CURRENT';
+              const isSchedOnly = s.isScheduledOnly || isUnavailable;
 
               let markerHtml = '';
               let cardBg = '#FFFFFF';
               let cardBorder = 'var(--border)';
 
-              if (isPassed) {
+              if (isSchedOnly) {
+                markerHtml = `<span class="stop-marker" style="background:#f8fafc; color:var(--ink-muted); border-color:var(--border);">${idx + 1}</span>`;
+              } else if (isPassed) {
                 markerHtml = `<span class="stop-marker" style="background:#16a34a; color:#FFFFFF; border-color:#16a34a;">✓</span>`;
               } else if (isCurrent) {
                 markerHtml = `<span class="stop-marker" style="background:var(--rail-blue); color:#FFFFFF; border-color:var(--rail-blue); box-shadow:0 0 0 4px rgba(18,59,109,0.25);">●</span>`;
@@ -1961,6 +2066,7 @@ function initLiveStatusPage() {
                         <span class="stn-code" style="font-size:11px; padding:2px 6px;">${s.code}</span>
                         ${isCurrent ? `<span class="avl-status-tag available" style="font-size:10px; padding:2px 6px;">Train Here</span>` : ''}
                         ${isPassed ? `<span style="font-size:10px; color:#16a34a; font-weight:700;">Departed</span>` : ''}
+                        ${isSchedOnly ? `<span style="font-size:10px; color:var(--ink-secondary); font-weight:600;">(Scheduled Halt)</span>` : ''}
                       </div>
                       <span style="font-size:11px; color:var(--ink-muted); display:block; margin-top:3px;">
                         Platform ${s.platform} • ${s.distance} km • Day ${s.day}
@@ -1968,13 +2074,22 @@ function initLiveStatusPage() {
                     </div>
 
                     <div style="text-align:right; font-size:12px;">
-                      <div class="mono" style="font-size:13px; font-weight:700; color:var(--ink);">
-                        ${isPassed ? s.actualDeparture : (s.scheduledDeparture !== 'None' ? s.scheduledDeparture : s.scheduledArrival)}
-                      </div>
-                      <div style="font-size:11px; color:var(--ink-muted);" class="mono">
-                        Sched: ${s.scheduledArrival !== 'None' ? s.scheduledArrival : 'Origin'} / ${s.scheduledDeparture !== 'None' ? s.scheduledDeparture : 'Term'}
-                        ${s.arrivalDelay > 0 ? `<span style="color:var(--rail-red); font-weight:700; margin-left:4px;">(+${s.arrivalDelay}m)</span>` : (isPassed ? `<span style="color:#16a34a; font-weight:700; margin-left:4px;">(RT)</span>` : '')}
-                      </div>
+                      ${isSchedOnly ? `
+                        <div class="mono" style="font-size:12px; font-weight:700; color:var(--ink);">
+                          Scheduled: ${s.scheduledArrival !== 'None' ? s.scheduledArrival : 'Origin'} / ${s.scheduledDeparture !== 'None' ? s.scheduledDeparture : 'Terminus'}
+                        </div>
+                        <div style="font-size:10px; color:var(--ink-muted);" class="mono">
+                          Live telemetry signal unavailable
+                        </div>
+                      ` : `
+                        <div class="mono" style="font-size:13px; font-weight:700; color:var(--ink);">
+                          Live: ${isPassed ? s.actualDeparture : (s.actualArrival && s.actualArrival !== '--:--' ? s.actualArrival : (s.scheduledDeparture !== 'None' ? s.scheduledDeparture : s.scheduledArrival))}
+                        </div>
+                        <div style="font-size:11px; color:var(--ink-muted);" class="mono">
+                          Scheduled: ${s.scheduledArrival !== 'None' ? s.scheduledArrival : 'Origin'} / ${s.scheduledDeparture !== 'None' ? s.scheduledDeparture : 'Term'}
+                          ${s.arrivalDelay > 0 ? `<span style="color:var(--rail-red); font-weight:700; margin-left:4px;">(+${s.arrivalDelay}m)</span>` : (isPassed ? `<span style="color:#16a34a; font-weight:700; margin-left:4px;">(RT)</span>` : '')}
+                        </div>
+                      `}
                     </div>
                   </div>
                 </div>
