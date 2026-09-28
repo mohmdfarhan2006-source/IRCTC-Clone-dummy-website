@@ -3,55 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register Account — BharatRail</title>
+  <title>Register Account — BharatRail Official Portal</title>
   <link rel="stylesheet" href="css/style.css">
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body style="display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh;">
+<body style="display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh; background:var(--bg-light-blue);">
 
-  <div class="container" style="max-width:460px; padding:30px 16px;">
+  <div class="container" style="max-width:480px; padding:30px 16px;">
     
-    <div class="card" style="padding:32px;">
+    <div class="card" style="padding:36px; box-shadow:var(--shadow-md);">
       
       <!-- Stepper Header -->
-      <div style="display:flex; justify-content:center; gap:8px; font-size:11px; font-weight:700; border-bottom:1px solid var(--border); padding-bottom:12px; margin-bottom:18px;">
-        <span id="stepTab1" class="avl-status-tag available">1. Details</span>
-        <span style="color:var(--border-strong);">→</span>
-        <span id="stepTab2" class="avl-status-tag" style="background:var(--canvas-subtle); color:var(--ink-muted);">2. OTP</span>
-        <span style="color:var(--border-strong);">→</span>
-        <span id="stepTab3" class="avl-status-tag" style="background:var(--canvas-subtle); color:var(--ink-muted);">3. Done</span>
+      <div style="display:flex; justify-content:center; gap:8px; font-size:11px; font-weight:800; border-bottom:1px solid var(--border); padding-bottom:14px; margin-bottom:20px;">
+        <span id="stepTab1" class="avl-status-tag available" style="padding:4px 10px;">1. Details</span>
+        <span style="color:var(--border-strong); margin-top:2px;">→</span>
+        <span id="stepTab2" class="avl-status-tag" style="background:var(--bg-light-blue); color:var(--ink-secondary); padding:4px 10px;">2. OTP Verification</span>
+        <span style="color:var(--border-strong); margin-top:2px;">→</span>
+        <span id="stepTab3" class="avl-status-tag" style="background:var(--bg-light-blue); color:var(--ink-secondary); padding:4px 10px;">3. Activation</span>
       </div>
 
       <!-- Step 1 Form -->
       <div id="regStep1">
         <div style="text-align:center; margin-bottom:20px;">
-          <h1 style="font-size:1.3rem; font-weight:800;">Create Passenger Account</h1>
-          <p style="font-size:12px; color:var(--ink-muted); margin-top:2px;">
-            Sign up for national Indian railway booking and e-tickets.
+          <h1 style="font-size:1.35rem; font-weight:900; color:var(--ink); margin:0;">Create Passenger Account</h1>
+          <p style="font-size:12px; color:var(--ink-secondary); margin-top:4px;">
+            Sign up for national Indian railway booking and digital e-tickets.
           </p>
         </div>
 
         <form onsubmit="goToOtpStep(event)">
-          <div class="form-group">
-            <label class="form-label">Full Legal Name *</label>
+          <div class="form-group" style="margin-bottom:12px;">
+            <label class="form-label" style="font-size:12px; font-weight:700; color:var(--ink);">Full Legal Name (as per Govt ID) *</label>
             <input type="text" id="regName" class="form-control" placeholder="e.g. Ramesh Chandra" value="Ramesh Chandra" required>
           </div>
-          <div class="form-group">
-            <label class="form-label">Email Address *</label>
+          <div class="form-group" style="margin-bottom:12px;">
+            <label class="form-label" style="font-size:12px; font-weight:700; color:var(--ink);">Email Address *</label>
             <input type="email" id="regEmail" class="form-control" placeholder="ramesh@example.com" value="ramesh@example.com" required>
           </div>
-          <div class="form-group">
-            <label class="form-label">Mobile Number *</label>
+          <div class="form-group" style="margin-bottom:12px;">
+            <label class="form-label" style="font-size:12px; font-weight:700; color:var(--ink);">Mobile Number *</label>
             <input type="tel" id="regMobile" class="form-control" placeholder="+91 9876543210" value="+91 9876543210" required>
           </div>
-          <div class="form-group">
-            <label class="form-label">Password *</label>
+          <div class="form-group" style="margin-bottom:18px;">
+            <label class="form-label" style="font-size:12px; font-weight:700; color:var(--ink);">Create Password *</label>
             <input type="password" id="regPass" class="form-control" placeholder="Min. 8 characters" value="Ramesh@123" required>
           </div>
 
-          <button type="submit" class="btn-search" style="width:100%; margin-top:10px; padding:12px;">
-            <span>Continue to Verification</span>
-            <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+          <button type="submit" class="btn-search" style="width:100%; padding:12px; font-size:14px;">
+            <span>Continue to OTP Verification</span>
+            <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
           </button>
         </form>
       </div>
@@ -59,73 +60,88 @@
       <!-- Step 2: 6-Digit OTP Form -->
       <div id="regStep2" style="display:none;">
         <div style="text-align:center; margin-bottom:20px;">
-          <h1 style="font-size:1.3rem; font-weight:800;">Verify Mobile / Email</h1>
-          <p style="font-size:12px; color:var(--ink-muted); margin-top:2px;">
-            Enter the 6-digit code sent to your registered contact.
+          <h1 style="font-size:1.35rem; font-weight:900; color:var(--ink); margin:0;">Verify Mobile / Email</h1>
+          <p style="font-size:12px; color:var(--ink-secondary); margin-top:4px;">
+            Enter the 6-digit verification code sent to your registered contact.
           </p>
         </div>
 
-        <div style="background:var(--canvas-subtle); padding:10px; border-radius:var(--radius-md); font-size:11px; text-align:center; margin-bottom:16px;">
-          Sent OTP to: <strong id="otpTargetEmail">ramesh@example.com</strong>
+        <div style="background:var(--bg-light-blue); padding:12px; border-radius:var(--radius-md); border:1px solid var(--border); font-size:12px; text-align:center; margin-bottom:18px;">
+          Sent OTP to: <strong id="otpTargetEmail" style="color:var(--rail-blue);">ramesh@example.com</strong>
         </div>
 
         <form onsubmit="handleVerifyOtp(event)">
-          <div style="display:flex; justify-content:center; gap:8px; margin-bottom:16px;">
-            <input type="text" maxlength="1" class="form-control mono otp-box" value="7" style="width:40px; text-align:center; font-size:1.2rem; font-weight:800;">
-            <input type="text" maxlength="1" class="form-control mono otp-box" value="8" style="width:40px; text-align:center; font-size:1.2rem; font-weight:800;">
-            <input type="text" maxlength="1" class="form-control mono otp-box" value="9" style="width:40px; text-align:center; font-size:1.2rem; font-weight:800;">
-            <input type="text" maxlength="1" class="form-control mono otp-box" value="0" style="width:40px; text-align:center; font-size:1.2rem; font-weight:800;">
-            <input type="text" maxlength="1" class="form-control mono otp-box" value="1" style="width:40px; text-align:center; font-size:1.2rem; font-weight:800;">
-            <input type="text" maxlength="1" class="form-control mono otp-box" value="2" style="width:40px; text-align:center; font-size:1.2rem; font-weight:800;">
+          <div style="display:flex; justify-content:center; gap:8px; margin-bottom:18px;">
+            <input type="text" maxlength="1" class="form-control mono otp-box" value="7" style="width:42px; text-align:center; font-size:1.25rem; font-weight:900; color:var(--rail-blue);">
+            <input type="text" maxlength="1" class="form-control mono otp-box" value="8" style="width:42px; text-align:center; font-size:1.25rem; font-weight:900; color:var(--rail-blue);">
+            <input type="text" maxlength="1" class="form-control mono otp-box" value="9" style="width:42px; text-align:center; font-size:1.25rem; font-weight:900; color:var(--rail-blue);">
+            <input type="text" maxlength="1" class="form-control mono otp-box" value="0" style="width:42px; text-align:center; font-size:1.25rem; font-weight:900; color:var(--rail-blue);">
+            <input type="text" maxlength="1" class="form-control mono otp-box" value="1" style="width:42px; text-align:center; font-size:1.25rem; font-weight:900; color:var(--rail-blue);">
+            <input type="text" maxlength="1" class="form-control mono otp-box" value="2" style="width:42px; text-align:center; font-size:1.25rem; font-weight:900; color:var(--rail-blue);">
           </div>
 
-          <button type="submit" class="btn-search" style="width:100%; padding:12px;">
+          <button type="submit" class="btn-search" style="width:100%; padding:12px; font-size:14px;">
             <i data-lucide="check-circle-2" style="width:16px;height:16px;"></i>
-            <span>Verify & Create Account</span>
+            <span>Verify & Activate Account</span>
           </button>
         </form>
       </div>
 
       <!-- Step 3: Success -->
       <div id="regStep3" style="display:none; text-align:center; padding:16px 0;">
-        <div style="width:54px; height:54px; border-radius:50%; background:var(--status-avl-bg); color:var(--status-avl-text); display:flex; align-items:center; justify-content:center; margin:0 auto 14px;">
-          <i data-lucide="check" style="width:28px;height:28px;"></i>
+        <div style="width:58px; height:58px; border-radius:50%; background:var(--status-avl-bg); color:var(--status-avl-text); display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+          <i data-lucide="check" style="width:32px;height:32px;"></i>
         </div>
-        <h2 style="font-size:1.3rem; font-weight:800; color:var(--ink);">Registration Completed!</h2>
-        <p style="font-size:12px; color:var(--ink-muted); margin-top:4px; max-width:300px; margin-left:auto; margin-right:auto;">
-          Your passenger profile has been activated. You can now book tickets across 8,967 stations.
+        <h2 style="font-size:1.35rem; font-weight:900; color:var(--ink); margin:0;">Registration Completed!</h2>
+        <p style="font-size:12px; color:var(--ink-secondary); margin-top:6px; max-width:320px; margin-left:auto; margin-right:auto; line-height:1.5;">
+          Your passenger profile has been activated successfully. You can now book tickets across 261 major stations and 56 authentic paired services.
         </p>
 
-        <a href="index.html" class="btn-search" style="display:inline-flex; margin-top:18px; padding:11px 24px;">
+        <a href="index.html" class="btn-search" style="display:inline-flex; margin-top:20px; padding:12px 28px; font-size:13px;">
           <span>Proceed to Book Tickets</span>
+          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
         </a>
       </div>
 
-      <div style="text-align:center; font-size:12px; color:var(--ink-muted); margin-top:20px;">
-        Already have an account? 
-        <a href="login.html" style="color:var(--primary); font-weight:700;">Sign In</a>
+      <div style="text-align:center; font-size:12px; color:var(--ink-secondary); margin-top:22px; border-top:1px solid var(--border); padding-top:16px;">
+        Already have a railway account? 
+        <a href="login.html" style="color:var(--rail-blue); font-weight:800; text-decoration:none;">Sign In</a>
       </div>
 
+    </div>
+
+    <div style="text-align:center; margin-top:20px; font-size:12px; color:var(--ink-secondary);">
+      <a href="index.html" style="color:var(--rail-blue); font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+        <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
+        <span>Back to Reservation Home</span>
+      </a>
     </div>
 
   </div>
 
   <script>
+    if (window.lucide) window.lucide.createIcons();
+
     function goToOtpStep(e) {
       e.preventDefault();
-      document.getElementById('otpTargetEmail').textContent = document.getElementById('regEmail').value;
+      const email = document.getElementById('regEmail').value;
+      document.getElementById('otpTargetEmail').textContent = email;
       document.getElementById('regStep1').style.display = 'none';
       document.getElementById('regStep2').style.display = 'block';
-
-      document.getElementById('stepTab1').className = 'avl-status-tag available';
+      document.getElementById('stepTab1').className = 'avl-status-tag';
+      document.getElementById('stepTab1').style.background = 'var(--bg-light-blue)';
+      document.getElementById('stepTab1').style.color = 'var(--ink-secondary)';
       document.getElementById('stepTab2').className = 'avl-status-tag available';
+      if (window.lucide) window.lucide.createIcons();
     }
 
     function handleVerifyOtp(e) {
       e.preventDefault();
       document.getElementById('regStep2').style.display = 'none';
       document.getElementById('regStep3').style.display = 'block';
-
+      document.getElementById('stepTab2').className = 'avl-status-tag';
+      document.getElementById('stepTab2').style.background = 'var(--bg-light-blue)';
+      document.getElementById('stepTab2').style.color = 'var(--ink-secondary)';
       document.getElementById('stepTab3').className = 'avl-status-tag available';
       if (window.lucide) window.lucide.createIcons();
     }

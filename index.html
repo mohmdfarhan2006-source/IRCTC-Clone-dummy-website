@@ -3,66 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BharatRail — Modern Indian Railway Booking</title>
+  <title>BharatRail — Official Indian Railway Ticket Reservation Portal</title>
   <link rel="stylesheet" href="css/style.css">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-  <!-- Top Sticky Navigation Header -->
+  <!-- Top Sticky Navigation Header (Deep Railway Blue #123B6D & Dark Navy #082B52) -->
   <header class="site-header">
     <div class="container nav-wrap">
       <a href="index.html" class="brand-link">
         <div class="brand-logo-icon">
-          <i data-lucide="train" style="width:20px;height:20px;"></i>
+          <i data-lucide="train" style="width:22px;height:22px;"></i>
         </div>
-        <div>
-          <span class="brand-title">Bharat<span>Rail</span></span>
-          <span class="brand-badge">Official</span>
+        <div class="brand-title">
+          <span>Bharat<span class="accent">Rail</span></span>
+          <span class="brand-badge">Official Railway Portal</span>
         </div>
       </a>
 
       <nav class="nav-links">
-        <a href="index.html" class="nav-link active">Book Trains</a>
-        <a href="pnr.html" class="nav-link">PNR Status</a>
-        <a href="trains.html" class="nav-link">Train Schedule</a>
-        <a href="live-status.html" class="nav-link">Live Status</a>
-        <a href="refunds.html" class="nav-link">Cancel & Refunds</a>
+        <a href="index.html" class="nav-link active">
+          <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+          <span>Book Ticket</span>
+        </a>
+        <a href="pnr.html" class="nav-link">
+          <i data-lucide="file-check" style="width:14px;height:14px;"></i>
+          <span>PNR Status</span>
+        </a>
+        <a href="trains.html" class="nav-link">
+          <i data-lucide="map" style="width:14px;height:14px;"></i>
+          <span>Train Schedule</span>
+        </a>
+        <a href="live-status.html" class="nav-link">
+          <i data-lucide="clock" style="width:14px;height:14px;"></i>
+          <span>Live Status</span>
+        </a>
+        <a href="bookings.html" class="nav-link">
+          <i data-lucide="ticket" style="width:14px;height:14px;"></i>
+          <span>My Bookings</span>
+        </a>
+        <a href="admin.html" class="nav-link">
+          <i data-lucide="database" style="width:14px;height:14px;"></i>
+          <span>Data Coverage</span>
+        </a>
+        <a href="refunds.html" class="nav-link">
+          <i data-lucide="shield-check" style="width:14px;height:14px;"></i>
+          <span>Refunds</span>
+        </a>
       </nav>
 
       <div class="header-actions">
+        <div class="railmadad-badge" title="24x7 RailMadad Helpline">
+          <i data-lucide="phone-call" style="width:13px;height:13px;"></i>
+          <span>Helpline: 139</span>
+        </div>
         <a href="login.html" class="btn-signin">
           <i data-lucide="user" style="width:14px;height:14px;"></i>
           <span>Sign In</span>
+        </a>
+        <a href="register.html" class="btn-register-top">
+          <span>Register</span>
         </a>
       </div>
     </div>
   </header>
 
-  <!-- Hero Section with Masked Vande Bharat Visual -->
+  <!-- Hero Section with Deep Blue Gradient & Railway Track Atmosphere -->
   <section class="hero-section">
+    <div class="hero-track-pattern"></div>
     <div class="container">
-      <div class="hero-banner-wrap">
-        <img src="images/vande-bharat-hero.jpg" alt="Vande Bharat Express" class="hero-image">
-        <div class="hero-overlay">
-          <span style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--primary);">
-            Next-Gen Indian Rail Network
-          </span>
-          <h1 class="hero-headline">Explore India by Train.</h1>
-          <p class="hero-subtitle">Fast, transparent seat booking across 8,967+ stations and 5,214 trains.</p>
+      
+      <div class="hero-header-box">
+        <div class="hero-pill-badge">
+          <i data-lucide="shield-check" style="width:12px;height:12px;"></i>
+          <span>Authoritative National Rail Network</span>
         </div>
+        <h1 class="hero-headline">Connecting Millions Across India, <span class="highlight">Every Day.</span></h1>
+        <p class="hero-subtitle">Fast, route-aware seat booking across 8,967+ stations and 5,214 trains with verified live timetables.</p>
       </div>
 
-      <!-- Floating Horizontal Search Pod -->
+      <!-- Large Elevated Booking Card -->
       <div class="search-pod">
+        <div class="search-pod-head">
+          <div class="search-pod-title">
+            <i data-lucide="train" style="width:18px;height:18px; color:var(--rail-blue);"></i>
+            <span>Search & Book Train Tickets</span>
+          </div>
+          <div class="search-quick-tags">
+            <span style="font-size:11px; font-weight:700; color:var(--ink-secondary);">Quick Date:</span>
+            <button type="button" class="quick-tag-btn" onclick="setQuickDate(0)">Today</button>
+            <button type="button" class="quick-tag-btn" onclick="setQuickDate(1)">Tomorrow</button>
+            <button type="button" class="quick-tag-btn" onclick="setQuickDate(2)">Day After</button>
+          </div>
+        </div>
+
         <form action="search.html" method="GET" class="search-form-row">
           
           <!-- From Station -->
           <div class="search-field">
             <label class="search-label">From Station</label>
             <div class="search-input-wrap">
-              <span class="search-input-icon"><i data-lucide="map-pin" style="width:14px;height:14px;"></i></span>
+              <span class="search-input-icon"><i data-lucide="map-pin" style="width:16px;height:16px;"></i></span>
               <input type="text" id="fromStation" name="from" placeholder="Enter station name or code" value="NDLS - New Delhi" autocomplete="off" required>
             </div>
             <div id="fromDropdown" class="autocomplete-dropdown"></div>
@@ -77,7 +120,7 @@
           <div class="search-field">
             <label class="search-label">To Station</label>
             <div class="search-input-wrap">
-              <span class="search-input-icon"><i data-lucide="navigation" style="width:14px;height:14px;"></i></span>
+              <span class="search-input-icon"><i data-lucide="navigation" style="width:16px;height:16px;"></i></span>
               <input type="text" id="toStation" name="to" placeholder="Enter station name or code" value="ARA - Ara Junction" autocomplete="off" required>
             </div>
             <div id="toDropdown" class="autocomplete-dropdown"></div>
@@ -87,7 +130,7 @@
           <div class="search-field">
             <label class="search-label">Date of Journey</label>
             <div class="search-input-wrap">
-              <span class="search-input-icon"><i data-lucide="calendar" style="width:14px;height:14px;"></i></span>
+              <span class="search-input-icon"><i data-lucide="calendar" style="width:16px;height:16px;"></i></span>
               <input type="date" id="journeyDate" name="date" required>
             </div>
           </div>
@@ -96,7 +139,7 @@
           <div class="search-field">
             <label class="search-label">Class</label>
             <div class="search-input-wrap">
-              <span class="search-input-icon"><i data-lucide="layers" style="width:14px;height:14px;"></i></span>
+              <span class="search-input-icon"><i data-lucide="layers" style="width:16px;height:16px;"></i></span>
               <select name="class" id="travelClass">
                 <option value="ALL">All Classes</option>
                 <option value="1A">1A - AC First Class</option>
@@ -114,13 +157,14 @@
           <div class="search-field">
             <label class="search-label">Quota</label>
             <div class="search-input-wrap">
-              <span class="search-input-icon"><i data-lucide="shield" style="width:14px;height:14px;"></i></span>
+              <span class="search-input-icon"><i data-lucide="shield" style="width:16px;height:16px;"></i></span>
               <select name="quota" id="quota">
                 <option value="GN" selected>General (GN)</option>
                 <option value="TQ">Tatkal (TQ)</option>
                 <option value="PT">Premium Tatkal (PT)</option>
                 <option value="LD">Ladies (LD)</option>
                 <option value="SS">Senior Citizen (SS)</option>
+                <option value="HP">Divyangjan (HP)</option>
               </select>
             </div>
           </div>
@@ -134,37 +178,53 @@
         </form>
       </div>
 
-      <!-- Quick Action Cards -->
+      <!-- Quick Action Cards (Part 14) -->
       <div class="quick-actions-bar">
         <a href="pnr.html" class="quick-action-card">
-          <div class="action-icon"><i data-lucide="file-check" style="width:20px;height:20px;"></i></div>
+          <div class="action-icon blue"><i data-lucide="file-check" style="width:20px;height:20px;"></i></div>
           <div>
             <div class="action-title">PNR Status</div>
             <div class="action-sub">Check live charting & seat allotment</div>
           </div>
         </a>
 
+        <a href="trains.html" class="quick-action-card">
+          <div class="action-icon red"><i data-lucide="map" style="width:20px;height:20px;"></i></div>
+          <div>
+            <div class="action-title">Train Schedule</div>
+            <div class="action-sub">Timetables & ordered halts</div>
+          </div>
+        </a>
+
         <a href="live-status.html" class="quick-action-card">
-          <div class="action-icon"><i data-lucide="clock" style="width:20px;height:20px;"></i></div>
+          <div class="action-icon orange"><i data-lucide="clock" style="width:20px;height:20px;"></i></div>
           <div>
             <div class="action-title">Live Train Status</div>
             <div class="action-sub">Real-time NTES GPS train tracking</div>
           </div>
         </a>
 
-        <a href="trains.html" class="quick-action-card">
-          <div class="action-icon"><i data-lucide="map" style="width:20px;height:20px;"></i></div>
+        <a href="bookings.html" class="quick-action-card">
+          <div class="action-icon green"><i data-lucide="ticket" style="width:20px;height:20px;"></i></div>
           <div>
-            <div class="action-title">Train Schedule</div>
-            <div class="action-sub">Authoritative timetable & halts</div>
+            <div class="action-title">My Bookings</div>
+            <div class="action-sub">Manage & download ticket ERS</div>
           </div>
         </a>
 
         <a href="refunds.html" class="quick-action-card">
-          <div class="action-icon"><i data-lucide="shield-check" style="width:20px;height:20px;"></i></div>
+          <div class="action-icon gold"><i data-lucide="shield-check" style="width:20px;height:20px;"></i></div>
           <div>
-            <div class="action-title">Instant Refunds</div>
-            <div class="action-sub">Statutory cancellation tariffs</div>
+            <div class="action-title">Cancellation & Refunds</div>
+            <div class="action-sub">Statutory IRCTC refund tariffs</div>
+          </div>
+        </a>
+
+        <a href="admin.html" class="quick-action-card">
+          <div class="action-icon blue"><i data-lucide="database" style="width:20px;height:20px;"></i></div>
+          <div>
+            <div class="action-title">Data Coverage</div>
+            <div class="action-sub">Inspect database integrity</div>
           </div>
         </a>
       </div>
@@ -172,28 +232,185 @@
     </div>
   </section>
 
-  <!-- Popular Corridor Trains Showcase -->
+  <!-- Popular Corridors Showcase -->
   <main class="content-section">
     <div class="container">
       <div class="section-head">
         <div>
           <h2 class="section-title">Popular Express & Vande Bharat Trains</h2>
-          <p class="section-sub">Real-time seat availability across high-demand corridors.</p>
+          <p class="section-sub">Real-time seat availability across high-demand Indian rail corridors.</p>
         </div>
-        <a href="search.html?from=NDLS&to=ARA" class="btn-signin" style="color:var(--primary); border-color:var(--primary-border);">
-          <span>View All 11 Corridor Trains</span>
+        <a href="search.html?from=NDLS&to=ARA" class="btn-signin" style="color:var(--rail-blue); border-color:var(--border-strong);">
+          <span>Search New Delhi ↔ Ara Corridor</span>
           <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
         </a>
       </div>
 
       <!-- Dynamic Train Comparison Container -->
       <div id="searchResultsList">
-        <!-- Rendered by app.js -->
+        <!-- Rendered dynamically by app.js -->
       </div>
+
+      <!-- High-Demand Corridor Links -->
+      <div class="section-head" style="margin-top:40px;">
+        <div>
+          <h2 class="section-title">Key Major Corridors</h2>
+          <p class="section-sub">Direct express connectivity connecting India's major economic hubs.</p>
+        </div>
+      </div>
+
+      <div class="corridors-grid">
+        <a href="search.html?from=NDLS&to=MMCT" class="corridor-card">
+          <div class="corridor-card-head">
+            <span class="corridor-badge">Western Corridor</span>
+            <span style="font-size:12px; font-weight:700; color:var(--rail-blue);">1,384 km</span>
+          </div>
+          <div class="corridor-route-name">New Delhi ↔ Mumbai Central</div>
+          <div class="corridor-train-count">Rajdhani Express & August Kranti</div>
+        </a>
+
+        <a href="search.html?from=NDLS&to=BSB" class="corridor-card">
+          <div class="corridor-card-head">
+            <span class="corridor-badge">Northern Corridor</span>
+            <span style="font-size:12px; font-weight:700; color:var(--rail-blue);">759 km</span>
+          </div>
+          <div class="corridor-route-name">New Delhi ↔ Varanasi Jn</div>
+          <div class="corridor-train-count">Vande Bharat (22436) & Shiv Ganga</div>
+        </a>
+
+        <a href="search.html?from=NDLS&to=HWH" class="corridor-card">
+          <div class="corridor-card-head">
+            <span class="corridor-badge">Eastern Corridor</span>
+            <span style="font-size:12px; font-weight:700; color:var(--rail-blue);">1,450 km</span>
+          </div>
+          <div class="corridor-route-name">New Delhi ↔ Howrah (Kolkata)</div>
+          <div class="corridor-train-count">Howrah Rajdhani & Poorva Express</div>
+        </a>
+
+        <a href="search.html?from=NDLS&to=ARA" class="corridor-card">
+          <div class="corridor-card-head">
+            <span class="corridor-badge">Bihar Corridor</span>
+            <span style="font-size:12px; font-weight:700; color:var(--rail-blue);">935 km</span>
+          </div>
+          <div class="corridor-route-name">New Delhi ↔ Ara / Patna</div>
+          <div class="corridor-train-count">Magadh Express, Shramjeevi & Sampoorna Kranti</div>
+        </a>
+
+        <a href="search.html?from=MMCT&to=ADI" class="corridor-card">
+          <div class="corridor-card-head">
+            <span class="corridor-badge">Gujarat Corridor</span>
+            <span style="font-size:12px; font-weight:700; color:var(--rail-blue);">493 km</span>
+          </div>
+          <div class="corridor-route-name">Mumbai Central ↔ Ahmedabad</div>
+          <div class="corridor-train-count">Mumbai-Ahmedabad Shatabdi Express</div>
+        </a>
+
+        <a href="search.html?from=MAS&to=SBC" class="corridor-card">
+          <div class="corridor-card-head">
+            <span class="corridor-badge">Southern Corridor</span>
+            <span style="font-size:12px; font-weight:700; color:var(--rail-blue);">362 km</span>
+          </div>
+          <div class="corridor-route-name">Chennai Central ↔ Bengaluru</div>
+          <div class="corridor-train-count">Chennai-Bengaluru Shatabdi Express</div>
+        </a>
+      </div>
+
+      <!-- Why Book on BharatRail? -->
+      <div class="section-head" style="margin-top:20px;">
+        <div>
+          <h2 class="section-title">Why Choose BharatRail?</h2>
+          <p class="section-sub">Engineered for transparent, reliable Indian Railways passenger reservations.</p>
+        </div>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-box">
+          <div class="feature-icon-wrap"><i data-lucide="route" style="width:24px;height:24px;"></i></div>
+          <h3 class="feature-title">Authoritative Routing</h3>
+          <p class="feature-desc">Strict stop-sequence validation. Only trains with verified scheduled stops qualify for searches — zero guessing or fake route fallbacks.</p>
+        </div>
+
+        <div class="feature-box">
+          <div class="feature-icon-wrap"><i data-lucide="armchair" style="width:24px;height:24px;"></i></div>
+          <h3 class="feature-title">Coach-Accurate Berths</h3>
+          <p class="feature-desc">Berth allocations strictly reflect genuine coach layouts: 2A has no middle berths, and Vande Bharat chair cars feature window and aisle seating.</p>
+        </div>
+
+        <div class="feature-box">
+          <div class="feature-icon-wrap"><i data-lucide="shield-check" style="width:24px;height:24px;"></i></div>
+          <h3 class="feature-title">Instant Statutory Refunds</h3>
+          <p class="feature-desc">Official Ministry of Railways cancellation tariff matrix applied with instant automatic credit initiated to source payment methods.</p>
+        </div>
+
+        <div class="feature-box">
+          <div class="feature-icon-wrap"><i data-lucide="radio" style="width:24px;height:24px;"></i></div>
+          <h3 class="feature-title">NTES Live Satellite GPS</h3>
+          <p class="feature-desc">Real-time train positioning with platform numbers, speed telemetry, delay tracking, and expected arrival times across all halts.</p>
+        </div>
+      </div>
+
     </div>
   </main>
 
-  <!-- Modern Quiet Footer -->
+  <!-- Route Drawer & Fare Modal Backdrops -->
+  <div id="routeDrawerBackdrop" class="drawer-backdrop">
+    <div class="route-drawer-panel">
+      <div class="route-drawer-head">
+        <div>
+          <span style="font-size:10px; font-weight:700; text-transform:uppercase; color:var(--rail-gold);">Official Timetable</span>
+          <h3 id="routeDrawerTrainTitle" style="font-size:1.15rem; font-weight:800; margin-top:2px;">Train Schedule</h3>
+        </div>
+        <button type="button" id="btnCloseRouteDrawer" style="color:#FFFFFF; padding:4px;">
+          <i data-lucide="x" style="width:20px;height:20px;"></i>
+        </button>
+      </div>
+      <div id="routeDrawerBody" class="route-drawer-body">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <div id="fareModalBackdrop" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="fareModalTitle" style="font-size:1rem; font-weight:800;">Fare Breakdown</h3>
+        <button type="button" id="btnCloseFareModal" style="color:#FFFFFF; padding:4px;">
+          <i data-lucide="x" style="width:18px;height:18px;"></i>
+        </button>
+      </div>
+      <div id="fareModalBody" class="modal-body">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation (Part 5) -->
+  <nav class="mobile-bottom-nav">
+    <div class="mobile-bottom-wrap">
+      <a href="index.html" class="mobile-nav-item active">
+        <i data-lucide="train" style="width:18px;height:18px;"></i>
+        <span>Book</span>
+      </a>
+      <a href="pnr.html" class="mobile-nav-item">
+        <i data-lucide="file-check" style="width:18px;height:18px;"></i>
+        <span>PNR</span>
+      </a>
+      <a href="bookings.html" class="mobile-nav-item">
+        <i data-lucide="ticket" style="width:18px;height:18px;"></i>
+        <span>Trips</span>
+      </a>
+      <a href="live-status.html" class="mobile-nav-item">
+        <i data-lucide="clock" style="width:18px;height:18px;"></i>
+        <span>Status</span>
+      </a>
+      <a href="login.html" class="mobile-nav-item">
+        <i data-lucide="user" style="width:18px;height:18px;"></i>
+        <span>Account</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Modern Quiet Footer (Dark Navy #082B52) -->
   <footer class="site-footer">
     <div class="container">
       <div class="footer-grid">
@@ -202,12 +419,12 @@
             <div class="brand-logo-icon">
               <i data-lucide="train" style="width:20px;height:20px;"></i>
             </div>
-            <span class="brand-title">Bharat<span>Rail</span></span>
+            <span class="brand-title">Bharat<span class="accent">Rail</span></span>
           </div>
           <p>
-            Modern Indian railway ticket booking platform. Single availability guarantee, real-time NTES running status, and instant cancellation refunds.
+            Official Indian Railway Passenger Reservation & Timetable Portal. Guaranteed verified routes, authentic coach-berth layouts, and transparent statutory refunds.
           </p>
-          <div style="margin-top:16px; font-size:11px; font-weight:700; color:var(--primary);">
+          <div style="margin-top:16px; font-size:12px; font-weight:700; color:var(--rail-gold);">
             24x7 RailMadad: 139 | RPF Security: 182
           </div>
         </div>
@@ -215,33 +432,33 @@
         <div>
           <h4 class="footer-heading">Services</h4>
           <ul class="footer-links">
-            <li><a href="index.html">Book Trains</a></li>
-            <li><a href="pnr.html">PNR Status</a></li>
-            <li><a href="trains.html">Train Timetable</a></li>
-            <li><a href="live-status.html">Live Status</a></li>
-            <li><a href="refunds.html">Cancel Ticket</a></li>
+            <li><a href="index.html">Book Train Ticket</a></li>
+            <li><a href="pnr.html">PNR Status & Charting</a></li>
+            <li><a href="trains.html">Train Timetables</a></li>
+            <li><a href="live-status.html">Live NTES Status</a></li>
+            <li><a href="bookings.html">My Bookings</a></li>
+            <li><a href="refunds.html">Cancellation & Refunds</a></li>
           </ul>
         </div>
 
         <div>
           <h4 class="footer-heading">Guidelines</h4>
           <ul class="footer-links">
-            <li><a href="help.html">Tatkal Timings</a></li>
-            <li><a href="help.html">Quota Allocation</a></li>
+            <li><a href="help.html">Tatkal Booking Timings</a></li>
+            <li><a href="help.html">Quota Allocation Rules</a></li>
             <li><a href="refunds.html">Cancellation Tariffs</a></li>
-            <li><a href="help.html">Vande Bharat Routes</a></li>
-            <li><a href="help.html">Single State Guarantee</a></li>
+            <li><a href="help.html">Vande Bharat Coach Layouts</a></li>
+            <li><a href="help.html">Senior Citizen Concession</a></li>
           </ul>
         </div>
 
         <div>
-          <h4 class="footer-heading">Support</h4>
+          <h4 class="footer-heading">Administration</h4>
           <ul class="footer-links">
-            <li><a href="help.html">Passenger Help</a></li>
-            <li><a href="refunds.html">Track Refund</a></li>
-            <li><a href="help.html">Senior Citizen Rules</a></li>
-            <li><a href="help.html">Divyaang Concession</a></li>
-            <li><a href="help.html">File Grievance (TDR)</a></li>
+            <li><a href="admin.html">Data Coverage Audit</a></li>
+            <li><a href="admin.html">Route Verification Tests</a></li>
+            <li><a href="help.html">Passenger Charter</a></li>
+            <li><a href="help.html">File TDR Online</a></li>
           </ul>
         </div>
 
@@ -250,15 +467,15 @@
           <ul class="footer-links">
             <li><a href="privacy.html">Privacy Policy</a></li>
             <li><a href="terms.html">Terms of Service</a></li>
-            <li><a href="refunds.html">Commercial Tariffs</a></li>
-            <li><a href="terms.html">Passenger Charter</a></li>
+            <li><a href="refunds.html">Statutory Tariffs</a></li>
+            <li><a href="terms.html">Security Architecture</a></li>
           </ul>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <span>© 2026 BharatRail. Modern Indian Railway Reservation Portal.</span>
-        <span>Pure HTML5, CSS3 & JavaScript Standalone Edition</span>
+        <span>© 2026 BharatRail. Official Indian Railway Reservation Portal.</span>
+        <span>Independent Railway Booking & Timetable System</span>
       </div>
     </div>
   </footer>

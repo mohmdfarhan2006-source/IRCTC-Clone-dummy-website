@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Passenger Help & Support Centre — BharatRail Official</title>
+  <title>My Bookings & Travel History — BharatRail Official</title>
   <link rel="stylesheet" href="css/style.css">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -40,7 +40,7 @@
           <i data-lucide="clock" style="width:14px;height:14px;"></i>
           <span>Live Status</span>
         </a>
-        <a href="bookings.html" class="nav-link">
+        <a href="bookings.html" class="nav-link active">
           <i data-lucide="ticket" style="width:14px;height:14px;"></i>
           <span>My Bookings</span>
         </a>
@@ -59,9 +59,9 @@
           <i data-lucide="phone-call" style="width:13px;height:13px;"></i>
           <span>Helpline: 139</span>
         </div>
-        <a href="login.html" class="btn-signin">
-          <i data-lucide="user" style="width:14px;height:14px;"></i>
-          <span>Sign In</span>
+        <a href="index.html" class="btn-signin" style="background:var(--rail-blue); color:#FFFFFF; border-color:var(--rail-blue);">
+          <i data-lucide="plus" style="width:14px;height:14px;"></i>
+          <span>New Booking</span>
         </a>
       </div>
     </div>
@@ -70,78 +70,34 @@
   <main class="content-section" style="padding: 32px 0 64px 0;">
     <div class="container" style="max-width:880px;">
       
-      <!-- Banner Card -->
-      <div class="card" style="padding:28px; margin-bottom:24px; box-shadow:var(--shadow-sm); border-left:4px solid var(--rail-blue);">
-        <div style="display:flex; align-items:center; gap:16px;">
-          <div class="brand-logo-icon" style="width:48px; height:48px; background:var(--bg-light-blue); color:var(--rail-blue); border:1px solid var(--border);">
-            <i data-lucide="help-circle" style="width:26px;height:26px;"></i>
-          </div>
-          <div>
-            <h1 style="font-size:1.45rem; font-weight:900; color:var(--ink); margin:0;">Passenger Help & Grievance Centre</h1>
-            <p style="font-size:12px; color:var(--ink-secondary); margin-top:4px;">
-              24x7 national emergency assistance, Tatkal rules, quota guidelines, and RailMadad tracking.
-            </p>
-          </div>
+      <!-- Page Header -->
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:24px; border-bottom:1px solid var(--border); padding-bottom:16px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <span style="font-size:11px; font-weight:800; color:var(--rail-blue); text-transform:uppercase; letter-spacing:0.04em; display:block; margin-bottom:4px;">
+            User Travel Portfolio
+          </span>
+          <h1 style="font-size:1.6rem; font-weight:900; color:var(--ink); margin:0;">
+            My Booked Train Tickets
+          </h1>
+          <p style="font-size:12px; color:var(--ink-secondary); margin-top:4px;">
+            Manage confirmed reservations, view Electronic Reservation Slips (ERS), check live PNR status, and process cancellations.
+          </p>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+          <a href="index.html" class="btn-search" style="margin:0; padding:10px 18px; font-size:12px;">
+            <i data-lucide="calendar-plus" style="width:14px;height:14px;"></i>
+            <span>Book New Train</span>
+          </a>
         </div>
       </div>
 
-      <!-- 3 Key Emergency Helplines -->
-      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin-bottom:24px;">
-        <div class="card" style="text-align:center; padding:22px; box-shadow:var(--shadow-sm);">
-          <div class="action-icon" style="margin:0 auto 12px; background:var(--bg-light-blue); color:var(--rail-blue);">
-            <i data-lucide="phone-call" style="width:24px;height:24px;"></i>
-          </div>
-          <h3 style="font-size:15px; font-weight:900; color:var(--ink); margin:0;">Railway Helpline 139</h3>
-          <p style="font-size:12px; color:var(--ink-secondary); margin-top:4px;">24x7 national toll-free customer enquiry, PNR status & RailMadad assistance.</p>
-        </div>
-
-        <div class="card" style="text-align:center; padding:22px; box-shadow:var(--shadow-sm);">
-          <div class="action-icon" style="margin:0 auto 12px; background:rgba(30,126,52,0.1); color:var(--status-avl-text);">
-            <i data-lucide="shield-alert" style="width:24px;height:24px;"></i>
-          </div>
-          <h3 style="font-size:15px; font-weight:900; color:var(--ink); margin:0;">Security Helpline 182</h3>
-          <p style="font-size:12px; color:var(--ink-secondary); margin-top:4px;">Railway Protection Force (RPF) onboard emergency assistance for passenger safety.</p>
-        </div>
-
-        <div class="card" style="text-align:center; padding:22px; box-shadow:var(--shadow-sm);">
-          <div class="action-icon" style="margin:0 auto 12px; background:var(--bg-light-blue); color:var(--rail-navy);">
-            <i data-lucide="file-text" style="width:24px;height:24px;"></i>
-          </div>
-          <h3 style="font-size:15px; font-weight:900; color:var(--ink); margin:0;">RailMadad Portal</h3>
-          <p style="font-size:12px; color:var(--ink-secondary); margin-top:4px;">Unified digital portal for complaint logging and real-time resolution tracking.</p>
-        </div>
-      </div>
-
-      <!-- FAQs Card -->
-      <div class="card" style="padding:26px; box-shadow:var(--shadow-sm);">
-        <h3 style="font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink); border-bottom:1px solid var(--border); padding-bottom:12px; margin:0 0 18px 0;">
-          Frequently Asked Reservation Questions
-        </h3>
-
-        <div style="display:flex; flex-direction:column; gap:16px; font-size:13px; color:var(--ink-secondary);">
-          <div style="background:var(--bg-light-blue); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border);">
-            <strong style="color:var(--ink); font-size:14px; display:block; margin-bottom:4px;">Q: What is the difference between GNWL, RLWL, and PQWL?</strong>
-            <p style="line-height:1.6; margin:0;">
-              <strong>GNWL (General Waitlist):</strong> Has the highest confirmation probability. Allocated for passengers beginning their journey at the train’s origin terminal.<br>
-              <strong>RLWL (Remote Location Waitlist):</strong> Dedicated quota pool between intermediate key junction stations.<br>
-              <strong>PQWL (Pooled Quota Waitlist):</strong> Shared across several intermediate small halts that pool a minor reservation quota.
-            </p>
-          </div>
-
-          <div style="background:var(--bg-light-blue); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border);">
-            <strong style="color:var(--ink); font-size:14px; display:block; margin-bottom:4px;">Q: When does Tatkal reservation open?</strong>
-            <p style="line-height:1.6; margin:0;">
-              Tatkal reservation opens 1 day prior to the train departure from originating station: <strong>10:00 AM IST</strong> for AC Classes (1A, 2A, 3A, 3E, CC, EC) and <strong>11:00 AM IST</strong> for Non-AC Classes (SL, 2S).
-            </p>
-          </div>
-
-          <div style="background:var(--bg-light-blue); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border);">
-            <strong style="color:var(--ink); font-size:14px; display:block; margin-bottom:4px;">Q: What are the berth layouts in 2A vs Chair Cars (CC / EC)?</strong>
-            <p style="line-height:1.6; margin:0;">
-              <strong>AC 2 Tier (2A):</strong> Strictly 4 berths per bay (Lower, Upper, Side Lower, Side Upper). <em>There is no Middle Berth in 2A coaches.</em><br>
-              <strong>Vande Bharat / Shatabdi Chair Cars (CC & EC):</strong> Equipped with ergonomic seating only (Window and Aisle seats). <em>There are no sleeping berths in day trainsets.</em>
-            </p>
-          </div>
+      <!-- Bookings List Container -->
+      <div id="myBookingsList">
+        <!-- Dynamically rendered by app.js -->
+        <div class="card text-center" style="padding:48px 20px;">
+          <i data-lucide="loader-2" class="spin" style="width:28px;height:28px; color:var(--rail-blue); margin-bottom:12px;"></i>
+          <div style="font-size:14px; font-weight:700; color:var(--ink);">Loading your railway reservations...</div>
         </div>
       </div>
 
@@ -159,7 +115,7 @@
         <i data-lucide="file-check" style="width:18px;height:18px;"></i>
         <span>PNR</span>
       </a>
-      <a href="bookings.html" class="mobile-nav-item">
+      <a href="bookings.html" class="mobile-nav-item active">
         <i data-lucide="ticket" style="width:18px;height:18px;"></i>
         <span>Trips</span>
       </a>

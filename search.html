@@ -3,184 +3,281 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Search Trains — BharatRail</title>
+  <title>Train Search Results — BharatRail Official Portal</title>
   <link rel="stylesheet" href="css/style.css">
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-  <!-- Top Sticky Navigation Header -->
+  <!-- Top Sticky Navigation Header (Deep Railway Blue #123B6D & Dark Navy #082B52) -->
   <header class="site-header">
     <div class="container nav-wrap">
       <a href="index.html" class="brand-link">
         <div class="brand-logo-icon">
-          <i data-lucide="train" style="width:20px;height:20px;"></i>
+          <i data-lucide="train" style="width:22px;height:22px;"></i>
         </div>
-        <div>
-          <span class="brand-title">Bharat<span>Rail</span></span>
-          <span class="brand-badge">Official</span>
+        <div class="brand-title">
+          <span>Bharat<span class="accent">Rail</span></span>
+          <span class="brand-badge">Official Railway Portal</span>
         </div>
       </a>
 
       <nav class="nav-links">
-        <a href="index.html" class="nav-link active">Book Trains</a>
-        <a href="pnr.html" class="nav-link">PNR Status</a>
-        <a href="trains.html" class="nav-link">Train Schedule</a>
-        <a href="live-status.html" class="nav-link">Live Status</a>
-        <a href="refunds.html" class="nav-link">Cancel & Refunds</a>
+        <a href="index.html" class="nav-link active">
+          <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+          <span>Book Ticket</span>
+        </a>
+        <a href="pnr.html" class="nav-link">
+          <i data-lucide="file-check" style="width:14px;height:14px;"></i>
+          <span>PNR Status</span>
+        </a>
+        <a href="trains.html" class="nav-link">
+          <i data-lucide="map" style="width:14px;height:14px;"></i>
+          <span>Train Schedule</span>
+        </a>
+        <a href="live-status.html" class="nav-link">
+          <i data-lucide="clock" style="width:14px;height:14px;"></i>
+          <span>Live Status</span>
+        </a>
+        <a href="bookings.html" class="nav-link">
+          <i data-lucide="ticket" style="width:14px;height:14px;"></i>
+          <span>My Bookings</span>
+        </a>
+        <a href="admin.html" class="nav-link">
+          <i data-lucide="database" style="width:14px;height:14px;"></i>
+          <span>Data Coverage</span>
+        </a>
+        <a href="refunds.html" class="nav-link">
+          <i data-lucide="shield-check" style="width:14px;height:14px;"></i>
+          <span>Refunds</span>
+        </a>
       </nav>
 
       <div class="header-actions">
+        <div class="railmadad-badge" title="24x7 RailMadad Helpline">
+          <i data-lucide="phone-call" style="width:13px;height:13px;"></i>
+          <span>Helpline: 139</span>
+        </div>
         <a href="login.html" class="btn-signin">
           <i data-lucide="user" style="width:14px;height:14px;"></i>
           <span>Sign In</span>
+        </a>
+        <a href="register.html" class="btn-register-top">
+          <span>Register</span>
         </a>
       </div>
     </div>
   </header>
 
-  <!-- Modify Search Bar -->
-  <section style="background:#FFFFFF; border-bottom:1px solid var(--border); padding:16px 0;">
+  <!-- Modify Search Strip Bar (Sticky Subheader) -->
+  <section style="background:#FFFFFF; border-bottom:1px solid var(--border); padding:14px 0; box-shadow:var(--shadow-sm); position:sticky; top:64px; z-index:90;">
     <div class="container">
-      <form action="search.html" method="GET" class="search-form-row" style="margin:0;">
-        <div class="search-field">
-          <label class="search-label">From</label>
+      <form action="search.html" method="GET" class="search-form-row" style="margin:0; gap:10px; align-items:flex-end;">
+        <div class="search-field" style="flex:1.2;">
+          <label class="search-label">From Station</label>
           <div class="search-input-wrap">
-            <input type="text" id="fromStation" name="from" value="NDLS" autocomplete="off" required>
+            <span class="search-input-icon"><i data-lucide="map-pin" style="width:15px;height:15px;"></i></span>
+            <input type="text" id="fromStation" name="from" placeholder="From Station" autocomplete="off" required>
           </div>
           <div id="fromDropdown" class="autocomplete-dropdown"></div>
         </div>
 
-        <button type="button" id="btnSwap" class="btn-swap" style="margin-top:14px;">
-          <i data-lucide="arrow-left-right" style="width:14px;height:14px;"></i>
+        <button type="button" id="btnSwap" class="btn-swap" title="Swap Origin & Destination Stations" style="margin-bottom:2px;">
+          <i data-lucide="arrow-left-right" style="width:15px;height:15px;"></i>
         </button>
 
-        <div class="search-field">
-          <label class="search-label">To</label>
+        <div class="search-field" style="flex:1.2;">
+          <label class="search-label">To Station</label>
           <div class="search-input-wrap">
-            <input type="text" id="toStation" name="to" value="ARA" autocomplete="off" required>
+            <span class="search-input-icon"><i data-lucide="navigation" style="width:15px;height:15px;"></i></span>
+            <input type="text" id="toStation" name="to" placeholder="To Station" autocomplete="off" required>
           </div>
           <div id="toDropdown" class="autocomplete-dropdown"></div>
         </div>
 
-        <div class="search-field">
-          <label class="search-label">Date</label>
+        <div class="search-field" style="flex:1;">
+          <label class="search-label">Date of Journey</label>
           <div class="search-input-wrap">
+            <span class="search-input-icon"><i data-lucide="calendar" style="width:15px;height:15px;"></i></span>
             <input type="date" id="journeyDate" name="date" required>
           </div>
         </div>
 
-        <div class="search-field">
+        <div class="search-field" style="flex:0.9;">
           <label class="search-label">Class</label>
           <div class="search-input-wrap">
             <select name="class" id="travelClass">
               <option value="ALL">All Classes</option>
-              <option value="1A">1A</option>
-              <option value="2A">2A</option>
-              <option value="3A" selected>3A</option>
-              <option value="SL">SL</option>
+              <option value="1A">1A - AC First</option>
+              <option value="2A">2A - AC 2 Tier</option>
+              <option value="3A">3A - AC 3 Tier</option>
+              <option value="3E">3E - AC 3 Economy</option>
+              <option value="EC">EC - Exec Chair</option>
+              <option value="CC">CC - AC Chair</option>
+              <option value="SL">SL - Sleeper</option>
             </select>
           </div>
         </div>
 
-        <div class="search-field">
+        <div class="search-field" style="flex:0.8;">
           <label class="search-label">Quota</label>
           <div class="search-input-wrap">
             <select name="quota" id="quota">
-              <option value="GN" selected>General</option>
-              <option value="TQ">Tatkal</option>
-              <option value="LD">Ladies</option>
+              <option value="GN">General (GN)</option>
+              <option value="TQ">Tatkal (TQ)</option>
+              <option value="LD">Ladies (LD)</option>
+              <option value="SS">Senior (SS)</option>
             </select>
           </div>
         </div>
 
-        <button type="submit" class="btn-search" style="margin-top:14px; padding:9px 18px;">
-          <span>Update</span>
+        <button type="submit" class="btn-search" style="padding:10px 22px; height:42px; margin-bottom:2px;">
+          <i data-lucide="search" style="width:15px;height:15px;"></i>
+          <span>Modify</span>
         </button>
       </form>
     </div>
   </section>
 
-  <!-- Main Search Content -->
-  <main class="content-section">
+  <!-- Main Search Results Content -->
+  <main class="content-section" style="padding: 24px 0 64px 0;">
     <div class="container">
-      <div class="checkout-grid" style="grid-template-columns: 260px 1fr;">
+      <div class="checkout-grid" style="grid-template-columns: 280px 1fr; gap:24px; align-items:flex-start;">
         
         <!-- Left Filter Rail -->
         <aside>
-          <div class="card" style="padding:18px;">
-            <h3 style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink); margin-bottom:14px;">
-              Filter Trains
-            </h3>
+          <div class="card" style="padding:20px; position:sticky; top:150px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+              <h3 style="font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink); display:flex; align-items:center; gap:6px; margin:0;">
+                <i data-lucide="filter" style="width:14px;height:14px; color:var(--rail-blue);"></i>
+                Filter Results
+              </h3>
+              <a href="search.html" style="font-size:11px; font-weight:700; color:var(--rail-blue); text-decoration:none;">Reset All</a>
+            </div>
 
-            <!-- Class Filter -->
-            <div style="margin-bottom:18px;">
-              <span style="font-size:11px; font-weight:700; color:var(--ink-muted); text-transform:uppercase; display:block; margin-bottom:8px;">
+            <!-- Journey Class Filter -->
+            <div style="margin-bottom:20px;">
+              <span style="font-size:11px; font-weight:800; color:var(--ink-secondary); text-transform:uppercase; display:block; margin-bottom:10px; letter-spacing:0.04em;">
                 Journey Class
               </span>
-              <div style="display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:600;">
-                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                  <input type="checkbox" checked accent-color="var(--primary)"> AC 3 Tier (3A)
+              <div style="display:flex; flex-direction:column; gap:8px; font-size:12px; font-weight:600; color:var(--ink);">
+                <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+                  <span style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" class="sidebar-class-filter" data-class="3A" checked accent-color="var(--rail-blue)"> AC 3 Tier (3A)
+                  </span>
+                  <span id="count-class-3A" style="font-size:11px; color:var(--ink-muted);">(0)</span>
                 </label>
-                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                  <input type="checkbox" checked accent-color="var(--primary)"> AC 2 Tier (2A)
+                <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+                  <span style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" class="sidebar-class-filter" data-class="2A" checked accent-color="var(--rail-blue)"> AC 2 Tier (2A)
+                  </span>
+                  <span id="count-class-2A" style="font-size:11px; color:var(--ink-muted);">(0)</span>
                 </label>
-                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                  <input type="checkbox" checked accent-color="var(--primary)"> Sleeper (SL)
+                <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+                  <span style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" class="sidebar-class-filter" data-class="1A" checked accent-color="var(--rail-blue)"> AC First (1A)
+                  </span>
+                  <span id="count-class-1A" style="font-size:11px; color:var(--ink-muted);">(0)</span>
                 </label>
-                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                  <input type="checkbox" checked accent-color="var(--primary)"> AC First Class (1A)
+                <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+                  <span style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" class="sidebar-class-filter" data-class="CC" checked accent-color="var(--rail-blue)"> AC Chair Car (CC)
+                  </span>
+                  <span id="count-class-CC" style="font-size:11px; color:var(--ink-muted);">(0)</span>
+                </label>
+                <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+                  <span style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" class="sidebar-class-filter" data-class="EC" checked accent-color="var(--rail-blue)"> Exec Chair (EC)
+                  </span>
+                  <span id="count-class-EC" style="font-size:11px; color:var(--ink-muted);">(0)</span>
+                </label>
+                <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+                  <span style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" class="sidebar-class-filter" data-class="SL" checked accent-color="var(--rail-blue)"> Sleeper (SL)
+                  </span>
+                  <span id="count-class-SL" style="font-size:11px; color:var(--ink-muted);">(0)</span>
                 </label>
               </div>
             </div>
 
-            <!-- Train Types -->
-            <div style="margin-bottom:18px;">
-              <span style="font-size:11px; font-weight:700; color:var(--ink-muted); text-transform:uppercase; display:block; margin-bottom:8px;">
-                Train Type
+            <!-- Train Type Filter -->
+            <div style="margin-bottom:20px;">
+              <span style="font-size:11px; font-weight:800; color:var(--ink-secondary); text-transform:uppercase; display:block; margin-bottom:10px; letter-spacing:0.04em;">
+                Train Service Type
               </span>
-              <div style="display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:600;">
-                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                  <input type="checkbox" checked accent-color="var(--primary)"> Vande Bharat
+              <div style="display:flex; flex-direction:column; gap:8px; font-size:12px; font-weight:600; color:var(--ink);">
+                <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+                  <span style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" class="sidebar-type-filter" data-type="VANDE_BHARAT" checked accent-color="var(--rail-blue)"> Vande Bharat
+                  </span>
+                  <span id="count-type-VANDE_BHARAT" style="font-size:11px; color:var(--ink-muted);">(0)</span>
                 </label>
-                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                  <input type="checkbox" checked accent-color="var(--primary)"> Rajdhani Express
+                <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+                  <span style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" class="sidebar-type-filter" data-type="RAJDHANI" checked accent-color="var(--rail-blue)"> Rajdhani Express
+                  </span>
+                  <span id="count-type-RAJDHANI" style="font-size:11px; color:var(--ink-muted);">(0)</span>
                 </label>
-                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                  <input type="checkbox" checked accent-color="var(--primary)"> Superfast Express
+                <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+                  <span style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" class="sidebar-type-filter" data-type="SHATABDI" checked accent-color="var(--rail-blue)"> Shatabdi Express
+                  </span>
+                  <span id="count-type-SHATABDI" style="font-size:11px; color:var(--ink-muted);">(0)</span>
+                </label>
+                <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+                  <span style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" class="sidebar-type-filter" data-type="SUPERFAST" checked accent-color="var(--rail-blue)"> Superfast Express
+                  </span>
+                  <span id="count-type-SUPERFAST" style="font-size:11px; color:var(--ink-muted);">(0)</span>
+                </label>
+                <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+                  <span style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" class="sidebar-type-filter" data-type="MAIL_EXPRESS" checked accent-color="var(--rail-blue)"> Mail / Express
+                  </span>
+                  <span id="count-type-MAIL_EXPRESS" style="font-size:11px; color:var(--ink-muted);">(0)</span>
                 </label>
               </div>
             </div>
 
-            <!-- Departure Time -->
+            <!-- Departure Window Filter -->
             <div>
-              <span style="font-size:11px; font-weight:700; color:var(--ink-muted); text-transform:uppercase; display:block; margin-bottom:8px;">
+              <span style="font-size:11px; font-weight:800; color:var(--ink-secondary); text-transform:uppercase; display:block; margin-bottom:10px; letter-spacing:0.04em;">
                 Departure Window
               </span>
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:11px;">
-                <button type="button" class="btn-signin" style="justify-content:center;">00:00 - 06:00</button>
-                <button type="button" class="btn-signin" style="justify-content:center;">06:00 - 12:00</button>
-                <button type="button" class="btn-signin" style="justify-content:center;">12:00 - 18:00</button>
-                <button type="button" class="btn-signin" style="justify-content:center; border-color:var(--primary); background:var(--primary-tint); color:var(--primary);">18:00 - 24:00</button>
+                <button type="button" class="btn-signin dep-window-btn" data-window="00-06" style="justify-content:center; padding:8px 4px; font-size:11px; border-radius:var(--radius-sm);">00:00 - 06:00</button>
+                <button type="button" class="btn-signin dep-window-btn" data-window="06-12" style="justify-content:center; padding:8px 4px; font-size:11px; border-radius:var(--radius-sm);">06:00 - 12:00</button>
+                <button type="button" class="btn-signin dep-window-btn" data-window="12-18" style="justify-content:center; padding:8px 4px; font-size:11px; border-radius:var(--radius-sm);">12:00 - 18:00</button>
+                <button type="button" class="btn-signin dep-window-btn" data-window="18-24" style="justify-content:center; padding:8px 4px; font-size:11px; border-radius:var(--radius-sm);">18:00 - 24:00</button>
               </div>
             </div>
+
           </div>
         </aside>
 
         <!-- Right Train Listings Column -->
         <div>
-          <div class="section-head">
+          <!-- Corridor Header Card -->
+          <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-lg); padding:18px 24px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; box-shadow:var(--shadow-sm);">
             <div>
-              <h2 class="section-title" id="corridorTitle">NDLS → ARA</h2>
-              <p class="section-sub" id="corridorDate">Loading journey details...</p>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <h2 style="font-size:18px; font-weight:800; color:var(--ink); margin:0;" id="corridorTitle">NDLS → ARA</h2>
+                <span class="badge" style="background:var(--bg-light-blue); color:var(--rail-blue); font-size:11px;">Official Route</span>
+              </div>
+              <p style="font-size:12px; color:var(--ink-secondary); margin-top:4px;" id="corridorDate">Loading journey details...</p>
             </div>
-            <div style="font-size:12px; font-weight:700; color:var(--primary); background:var(--primary-tint); padding:4px 10px; border-radius:var(--radius-sm); border:1px solid var(--primary-border);" id="resultsCount">
-              Loading...
+            <div style="font-size:12px; font-weight:800; color:var(--rail-blue); background:var(--bg-light-blue); padding:6px 14px; border-radius:var(--radius-full); border:1px solid var(--border);" id="resultsCount">
+              Checking schedules...
             </div>
           </div>
 
+          <!-- Dynamic Train Cards Container -->
           <div id="searchResultsList">
-            <!-- Populated dynamically by app.js -->
+            <div class="card text-center" style="padding:48px 20px;">
+              <i data-lucide="loader-2" class="spin" style="width:28px;height:28px; color:var(--rail-blue); margin-bottom:12px;"></i>
+              <div style="font-size:14px; font-weight:700; color:var(--ink);">Checking authoritative Indian Railway timetables...</div>
+            </div>
           </div>
         </div>
 
@@ -188,12 +285,120 @@
     </div>
   </main>
 
-  <!-- Modern Quiet Footer -->
+  <!-- Route Drawer Backdrop & Container -->
+  <div class="drawer-backdrop" id="routeDrawerBackdrop">
+    <div class="route-drawer-panel">
+      <div class="route-drawer-head">
+        <h3 style="font-size:15px; font-weight:800; color:var(--ink); margin:0;" id="routeDrawerTrainTitle">Train Route Schedule</h3>
+        <button type="button" class="drawer-close" id="btnCloseRouteDrawer" style="background:none; border:none; cursor:pointer; font-size:20px; color:var(--ink-secondary); padding:4px 8px;">✕</button>
+      </div>
+      <div class="route-drawer-body" id="routeDrawerBody"></div>
+    </div>
+  </div>
+
+  <!-- Fare Breakdown Modal Backdrop & Container -->
+  <div class="modal-backdrop" id="fareModalBackdrop">
+    <div class="modal-box" style="max-width:440px;">
+      <div class="modal-head">
+        <h3 style="font-size:15px; font-weight:800; color:var(--ink); margin:0;" id="fareModalTitle">Fare Breakdown</h3>
+        <button type="button" class="modal-close" id="btnCloseFareModal" style="background:none; border:none; cursor:pointer; font-size:20px; color:var(--ink-secondary); padding:4px 8px;">✕</button>
+      </div>
+      <div class="modal-body" id="fareModalBody"></div>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Sticky Navigation Bar -->
+  <nav class="mobile-nav">
+    <div class="mobile-nav-items">
+      <a href="index.html" class="mobile-nav-item active">
+        <i data-lucide="compass" style="width:18px;height:18px;"></i>
+        <span>Search</span>
+      </a>
+      <a href="pnr.html" class="mobile-nav-item">
+        <i data-lucide="file-check" style="width:18px;height:18px;"></i>
+        <span>PNR</span>
+      </a>
+      <a href="bookings.html" class="mobile-nav-item">
+        <i data-lucide="ticket" style="width:18px;height:18px;"></i>
+        <span>Trips</span>
+      </a>
+      <a href="live-status.html" class="mobile-nav-item">
+        <i data-lucide="clock" style="width:18px;height:18px;"></i>
+        <span>Status</span>
+      </a>
+      <a href="login.html" class="mobile-nav-item">
+        <i data-lucide="user" style="width:18px;height:18px;"></i>
+        <span>Account</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Modern Quiet Footer (Dark Navy #082B52) -->
   <footer class="site-footer">
     <div class="container">
-      <div class="footer-bottom" style="border:none; padding:0;">
-        <span>© 2026 BharatRail. Authoritative Indian Railway Reservation Engine.</span>
-        <a href="help.html" style="color:var(--primary); font-weight:600;">24x7 RailMadad Assistance</a>
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-link">
+            <div class="brand-logo-icon">
+              <i data-lucide="train" style="width:20px;height:20px;"></i>
+            </div>
+            <span class="brand-title">Bharat<span class="accent">Rail</span></span>
+          </div>
+          <p>
+            Official Indian Railway Passenger Reservation & Timetable Portal. Guaranteed verified routes, authentic coach-berth layouts, and transparent statutory refunds.
+          </p>
+          <div style="margin-top:16px; font-size:12px; font-weight:700; color:var(--rail-gold);">
+            24x7 RailMadad: 139 | RPF Security: 182
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Services</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Book Train Ticket</a></li>
+            <li><a href="pnr.html">PNR Status & Charting</a></li>
+            <li><a href="trains.html">Train Timetables</a></li>
+            <li><a href="live-status.html">Live NTES Status</a></li>
+            <li><a href="bookings.html">My Bookings</a></li>
+            <li><a href="refunds.html">Cancellation & Refunds</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Guidelines</h4>
+          <ul class="footer-links">
+            <li><a href="help.html">Tatkal Booking Timings</a></li>
+            <li><a href="help.html">Quota Allocation Rules</a></li>
+            <li><a href="refunds.html">Cancellation Tariffs</a></li>
+            <li><a href="help.html">Vande Bharat Coach Layouts</a></li>
+            <li><a href="help.html">Senior Citizen Concession</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Administration</h4>
+          <ul class="footer-links">
+            <li><a href="admin.html">Data Coverage Audit</a></li>
+            <li><a href="admin.html">Route Verification Tests</a></li>
+            <li><a href="help.html">Passenger Charter</a></li>
+            <li><a href="help.html">File TDR Online</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Legal</h4>
+          <ul class="footer-links">
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="refunds.html">Statutory Tariffs</a></li>
+            <li><a href="terms.html">Security Architecture</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 BharatRail. Official Indian Railway Reservation Portal.</span>
+        <span>Independent Railway Booking & Timetable System</span>
       </div>
     </div>
   </footer>
