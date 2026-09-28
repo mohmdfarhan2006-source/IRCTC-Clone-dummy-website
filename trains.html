@@ -89,7 +89,7 @@
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:11px; color:var(--ink-secondary); margin-top:14px;">
           <strong style="color:var(--ink);">Featured Expresses:</strong>
           <a href="trains.html?q=22436" class="btn-signin" style="padding:3px 10px; font-size:11px; background:var(--bg-light-blue);">22436 - Vande Bharat (NDLS→BSB)</a>
-          <a href="trains.html?q=12402" class="btn-signin" style="padding:3px 10px; font-size:11px; background:var(--bg-light-blue);">12402 - Magadh Express (NDLS→IPR)</a>
+          <a href="trains.html?q=20802" class="btn-signin" style="padding:3px 10px; font-size:11px; background:var(--bg-light-blue);">20802 - Magadh Express (NDLS→IPR)</a>
           <a href="trains.html?q=12952" class="btn-signin" style="padding:3px 10px; font-size:11px; background:var(--bg-light-blue);">12952 - Mumbai Rajdhani (NDLS→MMCT)</a>
           <a href="trains.html?q=12302" class="btn-signin" style="padding:3px 10px; font-size:11px; background:var(--bg-light-blue);">12302 - Howrah Rajdhani (NDLS→HWH)</a>
         </div>
@@ -111,8 +111,12 @@
             </p>
           </div>
 
-          <div>
-            <a href="search.html?from=NDLS&to=BSB" class="btn-search" style="margin:0; padding:10px 20px; font-size:13px;">
+          <div style="display:flex; gap:10px; align-items:center;">
+            <a href="live-status.html?train=22436" id="dtLiveStatusBtn" class="btn-signin" style="margin:0; padding:10px 16px; font-size:12px; background:#FFFFFF; color:var(--rail-blue); border-color:var(--rail-blue);">
+              <i data-lucide="navigation" style="width:14px;height:14px;"></i>
+              <span>Spot Train (Live Status)</span>
+            </a>
+            <a href="search.html?from=NDLS&to=BSB" id="dtBookBtn" class="btn-search" style="margin:0; padding:10px 20px; font-size:13px;">
               <i data-lucide="ticket" style="width:15px;height:15px;"></i>
               <span>Book This Train</span>
             </a>
@@ -356,6 +360,7 @@
   </footer>
 
   <script src="js/data.js"></script>
+  <script src="js/live_status_provider.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

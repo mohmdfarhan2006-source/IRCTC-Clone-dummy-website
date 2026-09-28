@@ -708,7 +708,7 @@ function updateSidebarFilterCounts(trains) {
 function renderHomepageFeaturedTrains(container) {
   if (typeof BHARAT_TRAINS === 'undefined' || !Array.isArray(BHARAT_TRAINS)) return;
 
-  const featuredNumbers = ['12402', '22436', '12952', '12302', '12622'];
+  const featuredNumbers = ['20802', '22436', '12952', '12302', '12622'];
   const featured = [];
 
   for (const num of featuredNumbers) {
@@ -752,7 +752,11 @@ function renderTrainCards(trains, container, fromCode, toCode, journeyDate, quot
               <h3 class="train-name">${t.name}</h3>
               <span class="train-type-pill">${(t.type || 'EXPRESS').replace('_', ' ')}</span>
             </div>
-            <div style="display:flex; align-items:center; gap:12px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <a href="live-status.html?train=${t.number}&date=${journeyDate || ''}" class="btn-signin" style="padding:4px 10px; font-size:11px; background:var(--bg-light-blue); color:var(--rail-blue); border-color:var(--rail-blue);" title="Spot live train running status">
+                <i data-lucide="navigation" style="width:12px;height:12px;"></i>
+                <span>Spot Train</span>
+              </a>
               <button type="button" class="btn-signin" style="padding:4px 10px; font-size:11px;" onclick="openRouteDrawer('${t.number}')">
                 <i data-lucide="map" style="width:12px;height:12px;"></i>
                 <span>View Route</span>
@@ -882,10 +886,10 @@ let currentBookingState = {
   baseFare: 1320,
   insurance: true,
   travelClass: '3A',
-  trainNumber: '12402',
+  trainNumber: '20802',
   fromCode: 'NDLS',
   toCode: 'ARA',
-  journeyDate: '2026-09-28',
+  journeyDate: '2026-09-29',
   quota: 'GN',
   trainObj: null
 };
@@ -895,7 +899,7 @@ function initBookingPage() {
   if (!bookingForm) return;
 
   const urlParams = new URLSearchParams(window.location.search);
-  currentBookingState.trainNumber = urlParams.get('train') || '12402';
+  currentBookingState.trainNumber = urlParams.get('train') || '20802';
   currentBookingState.travelClass = urlParams.get('class') || '3A';
   currentBookingState.fromCode = extractStationCode(urlParams.get('from')) || 'NDLS';
   currentBookingState.toCode = extractStationCode(urlParams.get('to')) || 'ARA';
@@ -1461,7 +1465,7 @@ function initTrainsPage() {
   if (!trainSearchInput || !trainDetailSection) return;
 
   const urlParams = new URLSearchParams(window.location.search);
-  const qParam = urlParams.get('q') || '12402';
+  const qParam = urlParams.get('q') || '20802';
   trainSearchInput.value = qParam;
 
   renderTrainDetail(qParam);
@@ -1491,7 +1495,7 @@ function initTrainsPage() {
 function renderTrainDetail(query) {
   if (typeof BHARAT_TRAINS === 'undefined' || !Array.isArray(BHARAT_TRAINS)) return;
 
-  const cleanQ = (query || '12402').trim().toLowerCase();
+  const cleanQ = (query || '20802').trim().toLowerCase();
   const train = BHARAT_TRAINS.find(t => 
     t.number.toLowerCase() === cleanQ || t.name.toLowerCase().includes(cleanQ)
   ) || BHARAT_TRAINS[0];
@@ -1503,6 +1507,11 @@ function renderTrainDetail(query) {
   document.getElementById('dtName').textContent = train.name;
   document.getElementById('dtType').textContent = (train.type || 'EXPRESS').replace('_', ' ');
   document.getElementById('dtRoute').textContent = `${train.source.code} (${train.source.name}) → ${train.destination.code} (${train.destination.name}) • ${totalDist} km`;
+
+  const liveBtn = document.getElementById('dtLiveStatusBtn');
+  if (liveBtn) liveBtn.href = `live-status.html?train=${train.number}`;
+  const bookBtn = document.getElementById('dtBookBtn');
+  if (bookBtn) bookBtn.href = `search.html?from=${train.source.code}&to=${train.destination.code}`;
 
   // Tab 1: Overview
   const tabOverview = document.getElementById('tab-pane-overview');
@@ -1664,90 +1673,282 @@ function renderTrainDetail(query) {
 }
 
 // ==========================================================================
-// 8. LIVE RUNNING STATUS (NTES GPS TRACKING SIMULATION)
+// 8. OFFICIAL NTES LIVE RUNNING STATUS (SPOT YOUR TRAIN)
 // ==========================================================================
+const RailwayLiveStatusService = {
+  async fetchLiveStatus(trainNumber, date) {
+    if (!trainNumber) return null;
+    const cleanNum = trainNumber.trim();
+    const cleanDate = date || (typeof NTESLiveStatusProvider !== 'undefined' ? NTESLiveStatusProvider.getTodayISTDateString() : new Date().toISOString().split('T')[0]);
+
+    // 1. Try querying backend /api/trains/:trainNumber/live-status
+    try {
+      const resp = await fetch(`/api/trains/${encodeURIComponent(cleanNum)}/live-status?date=${encodeURIComponent(cleanDate)}`);
+      if (resp.ok) {
+        const data = await resp.json();
+        return data;
+      }
+    } catch (e) {
+      // Backend not running (e.g. file:// protocol or offline) -> fall through to client-side provider
+    }
+
+    // 2. Standalone fallback using NTESLiveStatusProvider + BHARAT_TRAINS
+    if (typeof NTESLiveStatusProvider !== 'undefined' && typeof BHARAT_TRAINS !== 'undefined') {
+      const train = BHARAT_TRAINS.find(t => 
+        t.number.toLowerCase() === cleanNum.toLowerCase() || 
+        t.name.toLowerCase().includes(cleanNum.toLowerCase())
+      );
+      if (train) {
+        return NTESLiveStatusProvider.getLiveStatus(train, cleanDate);
+      }
+    }
+    return null;
+  }
+};
+
 function initLiveStatusPage() {
   const liveForm = document.getElementById('liveStatusForm');
   const liveInput = document.getElementById('liveTrainInput');
+  const liveDate = document.getElementById('liveDateInput');
   const liveContainer = document.getElementById('liveStatusResult');
   if (!liveForm || !liveContainer) return;
 
-  function renderLiveStatusForTrain(query) {
-    if (typeof BHARAT_TRAINS === 'undefined' || !Array.isArray(BHARAT_TRAINS)) return;
+  // Set default journey date to today IST
+  const todayStr = typeof NTESLiveStatusProvider !== 'undefined'
+    ? NTESLiveStatusProvider.getTodayISTDateString()
+    : new Date().toISOString().split('T')[0];
 
-    const cleanQ = (query || '12402').trim().toLowerCase();
-    const train = BHARAT_TRAINS.find(t => 
-      t.number.toLowerCase() === cleanQ || t.name.toLowerCase().includes(cleanQ)
-    ) || BHARAT_TRAINS[0];
+  if (liveDate && !liveDate.value) {
+    liveDate.value = todayStr;
+  }
 
-    const currentStopIdx = Math.min(train.route.length - 1, Math.max(1, Math.floor(train.route.length * 0.4)));
-    const currentStop = train.route[currentStopIdx];
+  // Check URL parameters: e.g. ?train=20801&date=2026-09-28
+  const urlParams = new URLSearchParams(window.location.search);
+  const qTrain = urlParams.get('train') || urlParams.get('q');
+  const qDate = urlParams.get('date');
+  if (qTrain && liveInput) {
+    liveInput.value = qTrain;
+  }
+  if (qDate && liveDate) {
+    liveDate.value = qDate;
+  }
+
+  let refreshTimer = null;
+
+  async function trackAndRenderTrain(query, date) {
+    const cleanQ = (query || (liveInput ? liveInput.value : '20801')).trim();
+    const cleanD = date || (liveDate ? liveDate.value : todayStr);
 
     liveContainer.style.display = 'block';
     liveContainer.innerHTML = `
-      <div class="card-header">
-        <div>
-          <span class="train-number-badge">${train.number}</span>
-          <h3 style="font-size:1.15rem; font-weight:800; display:inline-block; margin-left:8px; color:var(--rail-navy);">${train.name}</h3>
-          <p style="font-size:11px; color:var(--ink-muted); margin-top:4px;">
-            ${train.source.code} (${train.source.name}) → ${train.destination.code} (${train.destination.name}) • Updated via NTES GPS Satellites
-          </p>
+      <div style="padding:48px 24px; text-align:center;">
+        <div style="width:36px; height:36px; border:3px solid var(--border); border-top-color:var(--rail-blue); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 16px;"></div>
+        <p style="font-size:13px; font-weight:700; color:var(--rail-navy);">Contacting NTES Satellite Telemetry Engine...</p>
+        <p style="font-size:11px; color:var(--ink-muted); margin-top:4px;">Retrieving real-time checkpoint data for Train #${cleanQ}</p>
+      </div>
+    `;
+
+    try {
+      const data = await RailwayLiveStatusService.fetchLiveStatus(cleanQ, cleanD);
+      if (!data || data.error) {
+        liveContainer.innerHTML = `
+          <div style="padding:40px 24px; text-align:center;">
+            <div style="width:48px; height:48px; border-radius:50%; background:var(--status-reg-bg); color:var(--status-reg-text); display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
+              <i data-lucide="alert-triangle" style="width:24px;height:24px;"></i>
+            </div>
+            <h3 style="font-size:16px; font-weight:800; color:var(--ink);">${data && data.message ? data.message : 'Train Not Found'}</h3>
+            <p style="font-size:12px; color:var(--ink-secondary); margin-top:6px;">Please verify the train number or name and try again.</p>
+          </div>
+        `;
+        if (window.lucide) window.lucide.createIcons();
+        return;
+      }
+
+      renderLiveStatusCard(data);
+
+      // Auto-refresh every 30 seconds
+      if (refreshTimer) clearInterval(refreshTimer);
+      refreshTimer = setInterval(() => {
+        trackAndRenderTrain(cleanQ, cleanD);
+      }, 30000);
+
+    } catch (err) {
+      liveContainer.innerHTML = `
+        <div style="padding:32px 20px; text-align:center; color:var(--rail-red);">
+          <p>Failed to load live status: ${err.message}</p>
         </div>
-        <div style="text-align:right;">
-          <span class="avl-status-tag available" style="font-size:12px;">Right Time (On Schedule)</span>
-          <div style="font-size:11px; color:var(--ink-muted); margin-top:4px;">Average Speed: 94 km/h</div>
+      `;
+    }
+  }
+
+  function renderLiveStatusCard(data) {
+    let statusClass = 'available';
+    let statusLabel = 'RIGHT TIME';
+    if (data.status === 'DELAYED' || data.delayMinutes > 15) {
+      statusClass = 'regret';
+      statusLabel = `DELAYED ${data.delayMinutes}M`;
+    } else if (data.status === 'NOT_STARTED') {
+      statusClass = 'rac';
+      statusLabel = 'YET TO COMMENCE';
+    } else if (data.status === 'COMPLETED') {
+      statusClass = 'available';
+      statusLabel = 'JOURNEY COMPLETED';
+    } else if (data.status === 'CANCELLED') {
+      statusClass = 'regret';
+      statusLabel = 'CANCELLED';
+    } else if (data.status === 'RESCHEDULED') {
+      statusClass = 'wl';
+      statusLabel = 'RENUMBERED';
+    }
+
+    const updatedTime = new Date(data.lastUpdatedAt).toLocaleTimeString();
+
+    liveContainer.innerHTML = `
+      <div class="card-header" style="background:#FFFFFF; border-bottom:1px solid var(--border); padding:18px 24px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; width:100%; flex-wrap:wrap; gap:12px;">
+          <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="train-number-badge mono" style="font-size:14px; font-weight:800; background:var(--rail-blue); color:#FFFFFF; padding:4px 10px; border-radius:var(--radius-sm);">${data.trainNumber}</span>
+              <h2 style="font-size:1.25rem; font-weight:900; color:var(--ink); margin:0;">${data.trainName}</h2>
+              <span class="train-type-pill" style="font-size:10px;">${(data.trainType || 'EXPRESS').replace('_', ' ')}</span>
+            </div>
+            <p style="font-size:12px; color:var(--ink-secondary); margin-top:4px;">
+              ${data.originStation.name} (${data.originStation.code}) ➔ ${data.destinationStation.name} (${data.destinationStation.code}) • Journey Date: <strong>${data.startDate}</strong>
+            </p>
+            ${data.currentTrainNumber ? `<div style="font-size:11px; color:#b91c1c; font-weight:700; margin-top:3px;">Historical Train #${data.trainNumber} &bull; Renumbered to #${data.currentTrainNumber}</div>` : ''}
+          </div>
+
+          <div style="text-align:right;">
+            <span class="avl-status-tag ${statusClass}" style="font-size:12px; padding:6px 14px; font-weight:800; letter-spacing:0.02em;">
+              ${statusLabel}
+            </span>
+            <div style="font-size:11px; color:var(--ink-muted); margin-top:5px;" class="mono">
+              Signal Freshness: Refreshed at ${updatedTime}
+            </div>
+          </div>
         </div>
       </div>
 
-      <div style="padding:22px;">
+      <!-- Distance Progress Bar -->
+      <div style="background:var(--bg-light-blue); padding:12px 24px; border-bottom:1px solid var(--border);">
+        <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; color:var(--rail-navy); margin-bottom:6px;">
+          <span>Distance Covered: ${data.distanceCoveredKm} km of ${data.totalDistanceKm} km</span>
+          <span>${data.progressPercentage}% Completed</span>
+        </div>
+        <div style="height:6px; background:#e2e8f0; border-radius:3px; overflow:hidden;">
+          <div style="height:100%; width:${data.progressPercentage}%; background:linear-gradient(90deg, var(--rail-blue), #2563eb); transition:width 0.6s ease;"></div>
+        </div>
+      </div>
+
+      <!-- Real-Time Telemetry Message Banner -->
+      <div style="padding:14px 24px; background:#f0fdf4; border-bottom:1px solid #bbf7d0; display:flex; align-items:center; gap:12px;">
+        <div style="width:32px; height:32px; border-radius:50%; background:#dcfce7; color:#15803d; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <i data-lucide="navigation" style="width:16px;height:16px;"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px; font-weight:800; color:#166534;">
+            ${data.statusMessage}
+          </div>
+          <div style="font-size:11px; color:#15803d; margin-top:2px;">
+            Telemetry Source: NTES Station Control Gateway &bull; Delay Margin: ${data.delayMinutes > 0 ? '+' + data.delayMinutes + ' mins' : 'Right Time'}
+          </div>
+        </div>
+      </div>
+
+      <!-- 4-Metric Checkpoint Summary Grid -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; padding:18px 24px; background:#FFFFFF; border-bottom:1px solid var(--border);">
+        <div style="background:var(--bg-light-blue); padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--border);">
+          <span style="font-size:10px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase;">Last Passed Station</span>
+          <strong style="display:block; font-size:13px; color:var(--ink); margin-top:3px;">
+            ${data.lastPassedStation ? data.lastPassedStation.name + ' (' + data.lastPassedStation.code + ')' : data.originStation.name}
+          </strong>
+          <span style="font-size:11px; color:var(--ink-muted);" class="mono">
+            ${data.lastPassedStation ? 'Departed ' + data.lastPassedStation.passedAt : 'Scheduled ' + (data.originStation.departure || '--:--')}
+          </span>
+        </div>
+
+        <div style="background:var(--bg-light-blue); padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--border);">
+          <span style="font-size:10px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase;">Next Expected Station</span>
+          <strong style="display:block; font-size:13px; color:var(--rail-blue); margin-top:3px;">
+            ${data.nextStation ? data.nextStation.name + ' (' + data.nextStation.code + ')' : (data.status === 'COMPLETED' ? 'Destination Reached' : '--')}
+          </strong>
+          <span style="font-size:11px; color:var(--ink-muted);" class="mono">
+            ${data.nextStation ? 'Distance: ' + data.nextStation.distanceKm + ' km' : 'Terminus'}
+          </span>
+        </div>
+
+        <div style="background:var(--bg-light-blue); padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--border);">
+          <span style="font-size:10px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase;">Expected Arrival (ETA)</span>
+          <strong style="display:block; font-size:14px; color:var(--ink); margin-top:2px;" class="mono">
+            ${data.nextStation ? data.nextStation.eta : '--:--'}
+          </strong>
+          <span style="font-size:11px; color:${data.delayMinutes > 10 ? 'var(--rail-red)' : 'var(--status-avl-text)'}; font-weight:700;">
+            ${data.delayMinutes > 0 ? '+' + data.delayMinutes + ' mins delay' : 'On Schedule'}
+          </span>
+        </div>
+
+        <div style="background:var(--bg-light-blue); padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--border);">
+          <span style="font-size:10px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase;">Expected Platform</span>
+          <strong style="display:block; font-size:14px; color:var(--rail-navy); margin-top:2px;">
+            ${data.currentStation ? 'Platform ' + (data.currentStation.platform || '1') : (data.nextStation ? 'Platform ' + (data.stations.find(s=>s.code===data.nextStation.code)?.platform || '1') : 'Platform 1')}
+          </strong>
+          <span style="font-size:11px; color:var(--ink-muted);">Subject to live yard operational clearance</span>
+        </div>
+      </div>
+
+      <!-- Station Checkpoint Timeline -->
+      <div style="padding:22px 24px; background:#FFFFFF;">
+        <h4 style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--ink-secondary); margin-bottom:16px; letter-spacing:0.04em;">
+          En-Route NTES Station Checkpoints (${data.stations.length} Stoppages)
+        </h4>
+
         <div class="stoppage-timeline">
-          ${train.route.map((s, idx) => {
-            if (idx < currentStopIdx) {
-              return `
-                <div class="stop-node">
-                  <span class="stop-marker" style="background:var(--status-avl-text); color:#FFFFFF; border-color:var(--status-avl-text);">✓</span>
-                  <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-md); padding:10px 14px; display:flex; justify-content:space-between;">
-                    <div>
-                      <strong>${s.name} (${s.code})</strong>
-                      <span style="font-size:10px; color:var(--ink-muted); display:block;">Departed • Platform ${1 + (idx % 4)}</span>
-                    </div>
-                    <div style="text-align:right; font-size:12px;" class="mono">
-                      ${s.departure} (Actual: ${s.departure})
-                    </div>
-                  </div>
-                </div>
-              `;
-            } else if (idx === currentStopIdx) {
-              return `
-                <div class="stop-node">
-                  <span class="stop-marker" style="background:var(--rail-blue); color:#FFFFFF; border-color:var(--rail-blue); box-shadow:0 0 0 4px rgba(18,59,109,0.2);">●</span>
-                  <div style="background:var(--bg-light-blue); border:1.5px solid var(--rail-blue); border-radius:var(--radius-md); padding:12px 14px; display:flex; justify-content:space-between;">
-                    <div>
-                      <strong style="color:var(--rail-navy);">${s.name} (${s.code})</strong>
-                      <span style="font-size:11px; font-weight:700; color:var(--rail-blue); display:block;">Train Arrived at Platform ${1 + (idx % 4)}</span>
-                    </div>
-                    <div style="text-align:right; font-size:12px;" class="mono">
-                      <strong style="color:var(--rail-blue);">Arr: ${s.arrival} | Dep: ${s.departure}</strong>
-                    </div>
-                  </div>
-                </div>
-              `;
+          ${data.stations.map((s, idx) => {
+            const isPassed = s.status === 'PASSED';
+            const isCurrent = s.status === 'CURRENT';
+
+            let markerHtml = '';
+            let cardBg = '#FFFFFF';
+            let cardBorder = 'var(--border)';
+
+            if (isPassed) {
+              markerHtml = `<span class="stop-marker" style="background:#16a34a; color:#FFFFFF; border-color:#16a34a;">✓</span>`;
+            } else if (isCurrent) {
+              markerHtml = `<span class="stop-marker" style="background:var(--rail-blue); color:#FFFFFF; border-color:var(--rail-blue); box-shadow:0 0 0 4px rgba(18,59,109,0.25);">●</span>`;
+              cardBg = 'var(--bg-light-blue)';
+              cardBorder = 'var(--rail-blue)';
             } else {
-              return `
-                <div class="stop-node">
-                  <span class="stop-marker">${idx + 1}</span>
-                  <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-md); padding:10px 14px; display:flex; justify-content:space-between; opacity:0.8;">
-                    <div>
-                      <strong>${s.name} (${s.code})</strong>
-                      <span style="font-size:10px; color:var(--ink-muted); display:block;">${idx === train.route.length - 1 ? 'Destination Terminus' : 'Upcoming Halt'} • Expected Platform ${1 + (idx % 4)}</span>
+              markerHtml = `<span class="stop-marker" style="background:#f8fafc; color:var(--ink-muted); border-color:var(--border);">${idx + 1}</span>`;
+            }
+
+            return `
+              <div class="stop-node">
+                ${markerHtml}
+                <div style="background:${cardBg}; border:1px solid ${cardBorder}; border-radius:var(--radius-md); padding:12px 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                  <div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <strong style="font-size:13px; color:var(--ink);">${s.name}</strong>
+                      <span class="stn-code" style="font-size:11px; padding:2px 6px;">${s.code}</span>
+                      ${isCurrent ? `<span class="avl-status-tag available" style="font-size:10px; padding:2px 6px;">Train Here</span>` : ''}
+                      ${isPassed ? `<span style="font-size:10px; color:#16a34a; font-weight:700;">Departed</span>` : ''}
                     </div>
-                    <div style="text-align:right; font-size:12px;" class="mono">
-                      ETA: ${s.arrival}
+                    <span style="font-size:11px; color:var(--ink-muted); display:block; margin-top:3px;">
+                      Platform ${s.platform} • ${s.distance} km • Day ${s.day}
+                    </span>
+                  </div>
+
+                  <div style="text-align:right; font-size:12px;">
+                    <div class="mono" style="font-size:13px; font-weight:700; color:var(--ink);">
+                      ${isPassed ? s.actualDeparture : (s.scheduledDeparture !== 'None' ? s.scheduledDeparture : s.scheduledArrival)}
+                    </div>
+                    <div style="font-size:11px; color:var(--ink-muted);" class="mono">
+                      Sched: ${s.scheduledArrival !== 'None' ? s.scheduledArrival : 'Origin'} / ${s.scheduledDeparture !== 'None' ? s.scheduledDeparture : 'Term'}
+                      ${s.arrivalDelay > 0 ? `<span style="color:var(--rail-red); font-weight:700; margin-left:4px;">(+${s.arrivalDelay}m)</span>` : `<span style="color:#16a34a; font-weight:700; margin-left:4px;">(RT)</span>`}
                     </div>
                   </div>
                 </div>
-              `;
-            }
+              </div>
+            `;
           }).join('')}
         </div>
       </div>
@@ -1761,13 +1962,15 @@ function initLiveStatusPage() {
   liveForm.addEventListener('submit', (e) => {
     e.preventDefault();
     if (liveInput) {
-      renderLiveStatusForTrain(liveInput.value);
+      const trainVal = liveInput.value.trim();
+      const dateVal = liveDate ? liveDate.value : todayStr;
+      trackAndRenderTrain(trainVal, dateVal);
     }
   });
 
-  if (liveInput && liveInput.value) {
-    renderLiveStatusForTrain(liveInput.value);
-  }
+  const initialTrain = (liveInput && liveInput.value) || '20801';
+  const initialDate = (liveDate && liveDate.value) || todayStr;
+  trackAndRenderTrain(initialTrain, initialDate);
 }
 
 // ==========================================================================
@@ -1822,19 +2025,19 @@ function runBrowserRegressionSuite(container) {
 
   const testCases = [
     {
-      name: '1. ARA → NDLS (matches 12393 Sampoorna Kranti, 12401 Magadh, 12391 Shramjeevi, 12303 Poorva; excludes eastbound 12402, 12394 & discontinued 13007/12501)',
+      name: '1. ARA → NDLS (matches 12393 Sampoorna Kranti, 20801 Magadh, 12391 Shramjeevi, 12303 Poorva; excludes eastbound 20802, 12394 & historical 12401/12402)',
       test: () => {
         const matches = findDirectTrains('ARA', 'NDLS');
-        return matches.includes('12393') && matches.includes('12401') && matches.includes('12391') && matches.includes('12303') &&
-               !matches.includes('12402') && !matches.includes('12394') && !matches.includes('13007') && !matches.includes('12501');
+        return matches.includes('12393') && matches.includes('20801') && matches.includes('12391') && matches.includes('12303') &&
+               !matches.includes('20802') && !matches.includes('12401') && !matches.includes('12402') && !matches.includes('12394') && !matches.includes('13007') && !matches.includes('12501');
       }
     },
     {
-      name: '2. Reverse Isolation: NDLS → ARA (matches 12394, 12402, 12392, 12304; strictly excludes westbound 12393, 12401)',
+      name: '2. Reverse Isolation: NDLS → ARA (matches 12394, 20802, 12392, 12304; strictly excludes westbound 12393, 20801 & historical 12401/12402)',
       test: () => {
         const matches = findDirectTrains('NDLS', 'ARA');
-        return matches.includes('12394') && matches.includes('12402') && matches.includes('12392') && matches.includes('12304') &&
-               !matches.includes('12393') && !matches.includes('12401') && !matches.includes('13008') && !matches.includes('12502');
+        return matches.includes('12394') && matches.includes('20802') && matches.includes('12392') && matches.includes('12304') &&
+               !matches.includes('12393') && !matches.includes('20801') && !matches.includes('12401') && !matches.includes('12402') && !matches.includes('13008') && !matches.includes('12502');
       }
     },
     {
@@ -1854,10 +2057,10 @@ function runBrowserRegressionSuite(container) {
       }
     },
     {
-      name: '5. PNBE → NDLS (matches 12393 Sampoorna Kranti, 12309 Rajdhani, 12305 Rajdhani, 12273 Duronto, 12401 Magadh, 12391 Shramjeevi)',
+      name: '5. PNBE → NDLS (matches 12393 Sampoorna Kranti, 12309 Rajdhani, 12305 Rajdhani, 12273 Duronto, 20801 Magadh, 12391 Shramjeevi)',
       test: () => {
         const matches = findDirectTrains('PNBE', 'NDLS');
-        return matches.includes('12393') && matches.includes('12309') && matches.includes('12305') && matches.includes('12273') && matches.includes('12401');
+        return matches.includes('12393') && matches.includes('12309') && matches.includes('12305') && matches.includes('12273') && matches.includes('20801');
       }
     },
     {
@@ -1931,14 +2134,16 @@ function runBrowserRegressionSuite(container) {
       }
     },
     {
-      name: '15. Discontinued & Historical Services Strict Exclusion (13007, 13008, 12501, 12502, 13111, 13112)',
+      name: '15. Discontinued & Historical Services Strict Exclusion (13007, 13008, 12401, 12402, 12501, 12502, 13111, 13112)',
       test: () => {
         const t13007 = BHARAT_TRAINS.find(t => t.number === '13007');
+        const t12401 = BHARAT_TRAINS.find(t => t.number === '12401');
         const t12501 = BHARAT_TRAINS.find(t => t.number === '12501');
         const araNdls = findDirectTrains('ARA', 'NDLS');
         return t13007 && t13007.serviceStatus === 'DISCONTINUED' &&
+               t12401 && t12401.serviceStatus === 'HISTORICAL' && t12401.currentTrainNumber === '20801' &&
                t12501 && t12501.serviceStatus === 'HISTORICAL' &&
-               !araNdls.includes('13007') && !araNdls.includes('12501');
+               !araNdls.includes('13007') && !araNdls.includes('12401') && !araNdls.includes('12501');
       }
     },
     {
@@ -1966,6 +2171,31 @@ function runBrowserRegressionSuite(container) {
         const forward = findDirectTrains('ARA', 'PNBE');
         const reverse = findDirectTrains('PNBE', 'ARA');
         return forward.length >= 40 && reverse.length >= 40;
+      }
+    },
+    {
+      name: '19. NTES Live Running Telemetry Engine: generates valid checkpoints for 20801, 22436, 12393',
+      test: () => {
+        if (typeof NTESLiveStatusProvider === 'undefined') return false;
+        const t20801 = BHARAT_TRAINS.find(t => t.number === '20801');
+        const t22436 = BHARAT_TRAINS.find(t => t.number === '22436');
+        const s1 = NTESLiveStatusProvider.getLiveStatus(t20801, '2026-09-28');
+        const s2 = NTESLiveStatusProvider.getLiveStatus(t22436, '2026-09-28');
+        return s1 && s1.stations && s1.stations.length === 29 && s1.statusMessage &&
+               s2 && s2.stations && s2.stations.length === 4;
+      }
+    },
+    {
+      name: '20. Train Renumbering & Historical Lineage Tracking: 12401/12402 link to 20801/20802 with previousTrainNumber',
+      test: () => {
+        const t20801 = BHARAT_TRAINS.find(t => t.number === '20801');
+        const t20802 = BHARAT_TRAINS.find(t => t.number === '20802');
+        const t12401 = BHARAT_TRAINS.find(t => t.number === '12401');
+        const t12402 = BHARAT_TRAINS.find(t => t.number === '12402');
+        return t20801 && t20801.previousTrainNumber === '12401' &&
+               t20802 && t20802.previousTrainNumber === '12402' &&
+               t12401 && t12401.currentTrainNumber === '20801' &&
+               t12402 && t12402.currentTrainNumber === '20802';
       }
     }
   ];

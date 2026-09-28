@@ -82,20 +82,25 @@
           </p>
         </div>
 
-        <form id="liveStatusForm" style="display:flex; gap:12px; margin-bottom:14px;">
-          <div class="search-input-wrap" style="flex:1;">
+        <form id="liveStatusForm" style="display:flex; gap:12px; margin-bottom:14px; flex-wrap:wrap;">
+          <div class="search-input-wrap" style="flex:2; min-width:240px;">
             <span class="search-input-icon"><i data-lucide="search" style="width:16px;height:16px;"></i></span>
-            <input type="text" id="liveTrainInput" placeholder="Enter Train Number (e.g. 12402, 22436, 12952) or Name..." value="12402" required>
+            <input type="text" id="liveTrainInput" placeholder="Enter Train Number (e.g. 20801, 20802, 22436, 12952) or Name..." value="20801" required>
+          </div>
+          <div class="search-input-wrap" style="flex:1; min-width:160px;">
+            <span class="search-input-icon"><i data-lucide="calendar" style="width:16px;height:16px;"></i></span>
+            <input type="date" id="liveDateInput" required>
           </div>
           <button type="submit" class="btn-search" style="margin:0; padding:12px 28px; font-size:13px;">
             <i data-lucide="radar" style="width:16px;height:16px;"></i>
-            <span>Track Train</span>
+            <span>Spot Train</span>
           </button>
         </form>
 
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:11px; color:var(--ink-secondary); background:var(--bg-light-blue); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--border);">
-          <strong style="color:var(--ink);">Quick Track:</strong>
-          <button type="button" onclick="document.getElementById('liveTrainInput').value='12402'; document.getElementById('liveStatusForm').dispatchEvent(new Event('submit'))" class="btn-signin" style="padding:3px 10px; font-size:11px; background:#FFFFFF;">12402 - Magadh Express</button>
+          <strong style="color:var(--ink);">Quick Spot:</strong>
+          <button type="button" onclick="document.getElementById('liveTrainInput').value='20801'; document.getElementById('liveStatusForm').dispatchEvent(new Event('submit'))" class="btn-signin" style="padding:3px 10px; font-size:11px; background:#FFFFFF;">20801 - Magadh Exp (IPR→NDLS)</button>
+          <button type="button" onclick="document.getElementById('liveTrainInput').value='20802'; document.getElementById('liveStatusForm').dispatchEvent(new Event('submit'))" class="btn-signin" style="padding:3px 10px; font-size:11px; background:#FFFFFF;">20802 - Magadh Exp (NDLS→IPR)</button>
           <button type="button" onclick="document.getElementById('liveTrainInput').value='22436'; document.getElementById('liveStatusForm').dispatchEvent(new Event('submit'))" class="btn-signin" style="padding:3px 10px; font-size:11px; background:#FFFFFF;">22436 - Vande Bharat</button>
           <button type="button" onclick="document.getElementById('liveTrainInput').value='12952'; document.getElementById('liveStatusForm').dispatchEvent(new Event('submit'))" class="btn-signin" style="padding:3px 10px; font-size:11px; background:#FFFFFF;">12952 - Mumbai Rajdhani</button>
         </div>
@@ -206,6 +211,7 @@
   </footer>
 
   <script src="js/data.js"></script>
+  <script src="js/live_status_provider.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
