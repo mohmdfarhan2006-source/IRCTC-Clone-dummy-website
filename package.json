@@ -4,7 +4,8 @@
   "description": "Authentic Indian Railways Online Reservation Portal",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node test.js"
   },
   "keywords": ["irctc", "railway", "booking", "india"],
   "author": "BharatRail",

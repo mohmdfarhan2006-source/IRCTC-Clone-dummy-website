@@ -3,6 +3,8 @@
   "rewrites": [
     { "source": "/api/trains/:train/live-status", "destination": "/api/live.js?train=:train" },
     { "source": "/api/trains/live-status", "destination": "/api/live.js" },
+    { "source": "/api/fares", "destination": "/api/fares.js" },
+    { "source": "/api/trains/:train/fares", "destination": "/api/fares.js?train=:train" },
     { "source": "/api/health", "destination": "/api/health.js" }
   ]
 }

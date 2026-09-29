@@ -298,12 +298,17 @@
 
             <div class="fare-row">
               <span style="font-size:12px; color:var(--ink-secondary);">Reservation Fee</span>
-              <strong class="mono">₹40</strong>
+              <strong id="fareResFee" class="mono">₹40</strong>
             </div>
 
             <div class="fare-row">
               <span style="font-size:12px; color:var(--ink-secondary);">Superfast Surcharge</span>
-              <strong class="mono">₹45</strong>
+              <strong id="fareSfFee" class="mono">₹45</strong>
+            </div>
+
+            <div class="fare-row" id="fareTatkalRow" style="display:none;">
+              <span style="font-size:12px; color:var(--ink-secondary);">Tatkal Surcharge</span>
+              <strong id="fareTatkalFee" class="mono">₹0</strong>
             </div>
 
             <div class="fare-row">
@@ -436,6 +441,7 @@
   </footer>
 
   <script src="js/data.js"></script>
+  <script src="js/fare_engine.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

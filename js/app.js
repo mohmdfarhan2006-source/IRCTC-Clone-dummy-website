@@ -400,7 +400,7 @@ function parseTimeToMinutes(timeStr) {
   return (parts[0] || 0) * 60 + (parts[1] || 0);
 }
 
-function calculateSegmentMetrics(train, fromIndex, toIndex) {
+function calculateSegmentMetrics(train, fromIndex, toIndex, quotaCode, journeyDate) {
   const fromStop = train.route[fromIndex];
   const toStop = train.route[toIndex];
 
@@ -419,29 +419,32 @@ function calculateSegmentMetrics(train, fromIndex, toIndex) {
   const durationStr = `${durHours}h ${durMins > 0 ? (durMins < 10 ? '0' + durMins : durMins) + 'm' : '00m'}`;
 
   const segDist = Math.max(0, (toStop.distance || 0) - (fromStop.distance || 0));
-  const totalTrainDist = (train.route[train.route.length - 1].distance) || (segDist || 800);
-  const distRatio = totalTrainDist > 0 ? Math.max(0.20, Math.min(1.0, segDist / totalTrainDist)) : 1;
 
-  const MIN_CLASS_FARES = {
-    '1A': 1250, 'EC': 1100, '2A': 780, '3A': 520, '3E': 480, 'CC': 380, 'SL': 175, '2S': 85
-  };
-
-  const segmentClasses = train.classes.map(clsCode => {
-    const fullFare = (train.fares && train.fares[clsCode]) || 1200;
-    const calculatedFare = Math.max(MIN_CLASS_FARES[clsCode] || 150, Math.round(fullFare * distRatio));
-    const avl = (train.availability && train.availability[clsCode]) || {
-      status: 'AVAILABLE',
-      text: 'AVAILABLE 42',
-      code: 'available'
+  let segmentClasses = [];
+  if (typeof RailwayFareEngine !== 'undefined') {
+    const q = quotaCode || (typeof currentQuota !== 'undefined' ? currentQuota : 'GN');
+    const d = journeyDate || (typeof currentSearchDate !== 'undefined' ? currentSearchDate : null);
+    segmentClasses = RailwayFareEngine.calculateSegmentClassFares(train, fromStop.code, toStop.code, q, d);
+  } else {
+    const MIN_CLASS_FARES = {
+      '1A': 1250, 'EC': 1100, '2A': 780, '3A': 520, '3E': 480, 'CC': 380, 'SL': 175, '2S': 85
     };
-    return {
-      code: clsCode,
-      fare: calculatedFare,
-      avlText: avl.text,
-      avlStatus: avl.status,
-      avlCode: avl.code || 'available'
-    };
-  });
+    segmentClasses = (train.classes || ['SL', '3A']).map(clsCode => {
+      const fullFare = (train.fares && train.fares[clsCode]) || 1200;
+      const avl = (train.availability && train.availability[clsCode]) || {
+        status: 'AVAILABLE',
+        text: 'AVAILABLE 42',
+        code: 'available'
+      };
+      return {
+        code: clsCode,
+        fare: fullFare,
+        avlText: avl.text,
+        avlStatus: avl.status,
+        avlCode: avl.code || 'available'
+      };
+    });
+  }
 
   return {
     segmentDeparture: depTime,
@@ -577,7 +580,7 @@ function initSearchPage() {
     }
 
     // Train is an authentic matching service on this route and date
-    const metrics = calculateSegmentMetrics(train, fromIndex, toIndex);
+    const metrics = calculateSegmentMetrics(train, fromIndex, toIndex, quotaFilter, dateParam);
     matchingTrains.push({
       ...train,
       ...metrics
@@ -823,7 +826,7 @@ function renderTrainCards(trains, container, fromCode, toCode, journeyDate, quot
             </div>
 
             <div class="drawer-actions">
-              <button type="button" class="btn-fare-modal" id="btn-fare-modal-${t.number}" onclick="openFareModal('${t.number}', '${primaryClass.code}', ${primaryClass.fare})">
+              <button type="button" class="btn-fare-modal" id="btn-fare-modal-${t.number}" onclick="openFareModal('${t.number}', '${primaryClass.code}', ${primaryClass.fare}, '${displayFromCode}', '${displayToCode}', '${quota || 'GN'}', '${journeyDate || ''}')">
                 <i data-lucide="info" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:3px;"></i>
                 <span>Fare Breakdown</span>
               </button>
@@ -864,7 +867,7 @@ window.toggleDrawer = function(trainNumber, classCode, fare, avl, fromCode, toCo
     if (fareElem) fareElem.textContent = `₹${fare}`;
 
     if (fareModalBtn) {
-      fareModalBtn.onclick = () => openFareModal(trainNumber, classCode, fare);
+      fareModalBtn.onclick = () => openFareModal(trainNumber, classCode, fare, fromCode, toCode, quota, journeyDate);
     }
 
     const bookBtn = document.getElementById(`btn-book-${trainNumber}`);
@@ -913,17 +916,44 @@ function initBookingPage() {
 
   const train = currentBookingState.trainObj;
   if (train) {
-    const fromEq = getEquivalentStationCodes(currentBookingState.fromCode);
-    const toEq = getEquivalentStationCodes(currentBookingState.toCode);
-    const fromIndex = train.route.findIndex(s => fromEq.includes(s.code));
-    const toIndex = train.route.findIndex(s => toEq.includes(s.code));
+    const fromCode = currentBookingState.fromCode;
+    const toCode = currentBookingState.toCode;
+    const clsCode = currentBookingState.travelClass;
+    const quotaCode = currentBookingState.quota;
+    const journeyDate = currentBookingState.journeyDate;
 
-    if (fromIndex !== -1 && toIndex !== -1 && fromIndex < toIndex) {
-      const metrics = calculateSegmentMetrics(train, fromIndex, toIndex);
-      const matchCls = metrics.segmentClasses.find(c => c.code === currentBookingState.travelClass);
-      currentBookingState.baseFare = matchCls ? matchCls.fare : 1320;
-    } else {
-      currentBookingState.baseFare = (train.fares && train.fares[currentBookingState.travelClass]) || 1320;
+    if (typeof RailwayFareEngine !== 'undefined') {
+      const fareRes = RailwayFareEngine.calculateJourneyFare(train, fromCode, toCode, clsCode, quotaCode, journeyDate);
+      if (fareRes.success) {
+        currentBookingState.fareBreakdown = fareRes.breakdown;
+        currentBookingState.baseFare = fareRes.breakdown.baseFare;
+        currentBookingState.perPaxFare = fareRes.totalFare;
+      }
+    }
+
+    if (!currentBookingState.fareBreakdown) {
+      const fromEq = getEquivalentStationCodes(currentBookingState.fromCode);
+      const toEq = getEquivalentStationCodes(currentBookingState.toCode);
+      const fromIndex = train.route.findIndex(s => fromEq.includes(s.code));
+      const toIndex = train.route.findIndex(s => toEq.includes(s.code));
+
+      if (fromIndex !== -1 && toIndex !== -1 && fromIndex < toIndex) {
+        const metrics = calculateSegmentMetrics(train, fromIndex, toIndex, quotaCode, journeyDate);
+        const matchCls = metrics.segmentClasses.find(c => c.code === currentBookingState.travelClass);
+        currentBookingState.perPaxFare = matchCls ? matchCls.fare : 1320;
+      } else {
+        currentBookingState.perPaxFare = (train.fares && train.fares[currentBookingState.travelClass]) || 1320;
+      }
+      currentBookingState.fareBreakdown = {
+        baseFare: Math.max(50, currentBookingState.perPaxFare - 85),
+        reservationFee: 40,
+        superfastCharge: 45,
+        tatkalCharge: (quotaCode === 'TQ' || quotaCode === 'PT') ? 150 : 0,
+        cateringCharge: 0,
+        gst: Math.round(currentBookingState.perPaxFare * 0.05),
+        totalFare: currentBookingState.perPaxFare
+      };
+      currentBookingState.baseFare = currentBookingState.fareBreakdown.baseFare;
     }
 
     const bookingSummaryTrain = document.getElementById('bookingSummaryTrain');
@@ -1070,19 +1100,46 @@ window.updatePassengerField = function(idx, field, val) {
 
 function updateFareSummary() {
   const paxCount = currentBookingState.passengers.length;
-  const baseTotal = currentBookingState.baseFare * paxCount;
-  const resFee = 40 * paxCount;
-  const sfFee = 45 * paxCount;
-  const tatkalFee = (currentBookingState.quota === 'TQ' || currentBookingState.quota === 'PT') ? (150 * paxCount) : 0;
-  const gst = Math.round(baseTotal * 0.05);
+  const bd = currentBookingState.fareBreakdown || {
+    baseFare: currentBookingState.baseFare || 1200,
+    reservationFee: 40,
+    superfastCharge: 45,
+    tatkalCharge: (currentBookingState.quota === 'TQ' || currentBookingState.quota === 'PT') ? 150 : 0,
+    cateringCharge: 0,
+    gst: 66,
+    totalFare: (currentBookingState.baseFare || 1200)
+  };
+
+  const baseTotal = bd.baseFare * paxCount;
+  const resFeeTotal = bd.reservationFee * paxCount;
+  const sfFeeTotal = bd.superfastCharge * paxCount;
+  const tatkalFeeTotal = (bd.tatkalCharge || 0) * paxCount;
+  const gstTotal = bd.gst * paxCount;
   const ins = currentBookingState.insurance ? (0.45 * paxCount) : 0;
-  const grandTotal = Math.round(baseTotal + resFee + sfFee + tatkalFee + gst + ins);
+  const grandTotal = Math.round(bd.totalFare * paxCount + ins);
 
   const baseFareElem = document.getElementById('fareBaseTotal');
   if (baseFareElem) baseFareElem.textContent = `₹${baseTotal}`;
 
+  const resFeeElem = document.getElementById('fareResFee');
+  if (resFeeElem) resFeeElem.textContent = `₹${resFeeTotal}`;
+
+  const sfFeeElem = document.getElementById('fareSfFee');
+  if (sfFeeElem) sfFeeElem.textContent = `₹${sfFeeTotal}`;
+
+  const tatkalRow = document.getElementById('fareTatkalRow');
+  const tatkalElem = document.getElementById('fareTatkalFee');
+  if (tatkalRow && tatkalElem) {
+    if (tatkalFeeTotal > 0) {
+      tatkalRow.style.display = 'flex';
+      tatkalElem.textContent = `₹${tatkalFeeTotal}`;
+    } else {
+      tatkalRow.style.display = 'none';
+    }
+  }
+
   const gstElem = document.getElementById('fareGst');
-  if (gstElem) gstElem.textContent = `₹${gst}`;
+  if (gstElem) gstElem.textContent = `₹${gstTotal}`;
 
   const insElem = document.getElementById('fareInsurance');
   if (insElem) insElem.textContent = `₹${ins.toFixed(2)}`;
@@ -1120,13 +1177,17 @@ function handlePaymentAndConfirm(e) {
   const toStop = (toIndex !== -1 && trainObj.route[toIndex]) ? trainObj.route[toIndex] : trainObj.route[trainObj.route.length - 1];
 
   const paxCount = currentBookingState.passengers.length;
-  const baseTotal = currentBookingState.baseFare * paxCount;
-  const resFee = 40 * paxCount;
-  const sfFee = 45 * paxCount;
-  const tatkalFee = (currentBookingState.quota === 'TQ' || currentBookingState.quota === 'PT') ? (150 * paxCount) : 0;
-  const gst = Math.round(baseTotal * 0.05);
+  const bd = currentBookingState.fareBreakdown || {
+    baseFare: currentBookingState.baseFare || 1200,
+    reservationFee: 40,
+    superfastCharge: 45,
+    tatkalCharge: (currentBookingState.quota === 'TQ' || currentBookingState.quota === 'PT') ? 150 : 0,
+    cateringCharge: 0,
+    gst: 66,
+    totalFare: (currentBookingState.baseFare || 1200)
+  };
   const ins = currentBookingState.insurance ? (0.45 * paxCount) : 0;
-  const grandTotal = Math.round(baseTotal + resFee + sfFee + tatkalFee + gst + ins);
+  const grandTotal = Math.round(bd.totalFare * paxCount + ins);
 
   // Use coach layout to assign coach & berth strictly matching train & class
   const layout = (typeof COACH_LAYOUTS !== 'undefined' && COACH_LAYOUTS[currentBookingState.travelClass]) || (typeof COACH_LAYOUTS !== 'undefined' ? COACH_LAYOUTS['3A'] : { coaches: ['B1'], berthTypes: ['LOWER'], berthLabels: { 'LOWER': 'Lower Berth (LB)' } });
@@ -1636,6 +1697,10 @@ function renderTrainDetail(query) {
   // Tab 5: Fare structure
   const tabFare = document.getElementById('tab-pane-fare');
   if (tabFare) {
+    const permittedClasses = typeof RailwayFareEngine !== 'undefined'
+      ? RailwayFareEngine.getPermittedClassesForTrain(train)
+      : (train.classes || ['SL', '3A']);
+
     tabFare.innerHTML = `
       <table class="data-table">
         <thead>
@@ -1644,30 +1709,42 @@ function renderTrainDetail(query) {
             <th>Base Fare</th>
             <th>Reservation</th>
             <th>Superfast</th>
-            <th>GST (5%)</th>
+            <th>GST (5% AC)</th>
             <th>Total Fare</th>
           </tr>
         </thead>
         <tbody class="mono">
-          ${train.classes.map(cls => {
-            const fullFare = (train.fares && train.fares[cls]) || 1200;
-            const res = 40;
-            const sf = 45;
-            const gst = Math.round(fullFare * 0.05);
-            const total = fullFare + res + sf + gst;
+          ${permittedClasses.map(cls => {
+            let fRes = null;
+            if (typeof RailwayFareEngine !== 'undefined') {
+              const sCode = (train.source && train.source.code) || 'SRC';
+              const dCode = (train.destination && train.destination.code) || 'DST';
+              fRes = RailwayFareEngine.calculateJourneyFare(train, sCode, dCode, cls, 'GN');
+            }
+            const bd = fRes && fRes.breakdown ? fRes.breakdown : {
+              baseFare: (train.fares && train.fares[cls]) || 500,
+              reservationFee: 40,
+              superfastCharge: 45,
+              gst: 0,
+              totalFare: (train.fares && train.fares[cls]) || 500
+            };
+            const clsName = (typeof RailwayFareEngine !== 'undefined' && RailwayFareEngine.CLASS_NAMES[cls]) || cls;
             return `
               <tr>
-                <td style="font-family:var(--font-sans); font-weight:700;">${cls}</td>
-                <td>₹${fullFare}</td>
-                <td>₹${res}</td>
-                <td>₹${sf}</td>
-                <td>₹${gst}</td>
-                <td style="font-weight:800; color:var(--rail-blue);">₹${total}</td>
+                <td style="font-family:var(--font-sans); font-weight:700;">${clsName}</td>
+                <td>₹${bd.baseFare}</td>
+                <td>₹${bd.reservationFee}</td>
+                <td>₹${bd.superfastCharge}</td>
+                <td>₹${bd.gst}</td>
+                <td style="font-weight:800; color:var(--rail-blue);">₹${bd.totalFare}</td>
               </tr>
             `;
           }).join('')}
         </tbody>
       </table>
+      <div style="margin-top:14px; font-size:11px; color:var(--ink-muted);">
+        * End-to-end (${train.distance || 0} km) statutory coaching tariff under IRCA Tariff No. 26. Intermediate station fares apply dynamically.
+      </div>
     `;
   }
 }
@@ -2508,50 +2585,90 @@ window.closeRouteDrawer = function() {
   if (backdrop) backdrop.classList.remove('open');
 };
 
-window.openFareModal = function(trainNumber, classCode, baseFare) {
+window.openFareModal = function(trainNumber, classCode, baseFare, fromCode, toCode, quotaCode, journeyDate) {
   const backdrop = document.getElementById('fareModalBackdrop');
   const title = document.getElementById('fareModalTitle');
   const body = document.getElementById('fareModalBody');
   if (!backdrop || !body) return;
 
-  const fareNum = parseInt(baseFare, 10) || 1200;
-  const resCharge = 40;
-  const sfCharge = 45;
-  const gst = Math.round(fareNum * 0.05);
-  const total = fareNum + resCharge + sfCharge + gst;
+  let train = null;
+  if (typeof BHARAT_TRAINS !== 'undefined' && Array.isArray(BHARAT_TRAINS)) {
+    train = BHARAT_TRAINS.find(t => t.number === trainNumber);
+  }
 
+  let breakdown = null;
+  if (typeof RailwayFareEngine !== 'undefined' && train) {
+    const q = quotaCode || (typeof currentQuota !== 'undefined' ? currentQuota : 'GN');
+    const d = journeyDate || (typeof currentSearchDate !== 'undefined' ? currentSearchDate : null);
+    const res = RailwayFareEngine.calculateJourneyFare(train, fromCode, toCode, classCode, q, d);
+    if (res.success) {
+      breakdown = res.breakdown;
+    }
+  }
+
+  if (!breakdown) {
+    const fareNum = parseInt(baseFare, 10) || 520;
+    const resCharge = 40;
+    const sfCharge = 45;
+    const gst = Math.round(fareNum * 0.05);
+    breakdown = {
+      baseFare: Math.max(50, fareNum - resCharge - sfCharge - gst),
+      reservationFee: resCharge,
+      superfastCharge: sfCharge,
+      tatkalCharge: 0,
+      cateringCharge: 0,
+      gst,
+      totalFare: fareNum
+    };
+  }
+
+  const clsName = (typeof RailwayFareEngine !== 'undefined' && RailwayFareEngine.CLASS_NAMES[classCode]) || classCode;
   if (title) {
-    title.textContent = `Fare Breakdown: Train #${trainNumber} (${classCode})`;
+    title.textContent = `Fare Breakdown: Train #${trainNumber} (${clsName})`;
   }
 
   body.innerHTML = `
     <div style="margin-bottom:14px; font-size:12px; color:var(--ink-secondary);">
-      Itemized statutory fare breakdown under Ministry of Railways tariff guidelines:
+      Itemized statutory fare breakdown under Ministry of Railways tariff guidelines (IRCA Coaching Tariff No. 26):
     </div>
 
     <div class="fare-matrix-row">
       <span>Base Railway Ticket Fare</span>
-      <strong class="mono">₹${fareNum}</strong>
+      <strong class="mono">₹${breakdown.baseFare}</strong>
     </div>
     <div class="fare-matrix-row">
       <span>Reservation Fee</span>
-      <strong class="mono">₹${resCharge}</strong>
+      <strong class="mono">₹${breakdown.reservationFee}</strong>
     </div>
+    ${breakdown.superfastCharge > 0 ? `
     <div class="fare-matrix-row">
       <span>Superfast Surcharge</span>
-      <strong class="mono">₹${sfCharge}</strong>
+      <strong class="mono">₹${breakdown.superfastCharge}</strong>
     </div>
+    ` : ''}
+    ${breakdown.tatkalCharge > 0 ? `
     <div class="fare-matrix-row">
-      <span>Applicable GST (5%)</span>
-      <strong class="mono">₹${gst}</strong>
+      <span>Tatkal Surcharge</span>
+      <strong class="mono">₹${breakdown.tatkalCharge}</strong>
+    </div>
+    ` : ''}
+    ${breakdown.cateringCharge > 0 ? `
+    <div class="fare-matrix-row">
+      <span>Catering Charges (Mandatory)</span>
+      <strong class="mono">₹${breakdown.cateringCharge}</strong>
+    </div>
+    ` : ''}
+    <div class="fare-matrix-row">
+      <span>Applicable GST (${breakdown.gst > 0 ? '5%' : '0%'})</span>
+      <strong class="mono">₹${breakdown.gst}</strong>
     </div>
     <div class="fare-matrix-row total">
       <span>Total Payable Amount</span>
-      <strong class="mono" style="font-size:17px; color:var(--rail-blue);">₹${total}</strong>
+      <strong class="mono" style="font-size:17px; color:var(--rail-blue);">₹${breakdown.totalFare}</strong>
     </div>
 
     <div style="margin-top:18px; font-size:11px; color:var(--ink-muted); line-height:1.4;">
-      * Catering charges and optional travel insurance (₹0.45) may apply upon final passenger review.
+      * Statutory commercial fare rounded to nearest ₹5. Optional travel insurance (₹0.45) applies upon passenger selection at checkout.
     </div>
   `;
 
