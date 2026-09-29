@@ -1765,9 +1765,9 @@ function renderTrainDetail(query) {
 // 8. OFFICIAL NTES LIVE RUNNING STATUS (SPOT YOUR TRAIN)
 // ==========================================================================
 const BHARATRAIL_API_CONFIG = {
-  // Configured production live telemetry gateway URL
-  // Can be configured by user or environment via window.BHARATRAIL_API_URL or localStorage
-  DEFAULT_PROD_URL: 'https://bharatrail-live-telemetry.onrender.com',
+  // Production backend: Vercel serverless (api/ folder deployed alongside repo)
+  // Override by setting window.BHARATRAIL_API_URL or localStorage key 'bharatrail_live_api_url'
+  DEFAULT_PROD_URL: 'https://irctc-clone-dummy-website.vercel.app',
 
   getApiBaseUrl() {
     if (typeof window !== 'undefined') {
@@ -1778,15 +1778,19 @@ const BHARATRAIL_API_CONFIG = {
       } catch (e) {}
 
       const host = window.location.hostname;
-      // If deployed on Vercel or Render where API is co-hosted with frontend
+      // If running directly on Vercel or Render — API is co-hosted, use relative paths
       if (host.endsWith('vercel.app') || host.endsWith('onrender.com')) {
         return window.location.origin;
       }
 
+      // Local development
       const isLocal = host === 'localhost' || host === '127.0.0.1' || host === '';
       if (isLocal) {
         return (window.location.port === '3000') ? '' : 'http://localhost:3000';
       }
+
+      // GitHub Pages or any other static host → use Vercel backend
+      return this.DEFAULT_PROD_URL;
     }
     return (this.DEFAULT_PROD_URL || '').replace(/\/+$/, '');
   }
@@ -1796,8 +1800,7 @@ const BHARATRAIL_API_CONFIG = {
 // HYBRID IRCTC FARE SERVICE (CHANGE 2)
 // ==========================================================================
 async function getFare(trainNo, from, to, date, cls, quota) {
-  const isGitHubPages = typeof window !== 'undefined' && window.location.hostname.includes('github.io');
-  const API_BASE = isGitHubPages ? (window.BHARATRAIL_API_URL || 'https://bharatrail-live-telemetry.onrender.com') : '';
+  const API_BASE = BHARATRAIL_API_CONFIG.getApiBaseUrl();
   try {
     const res = await fetch(`${API_BASE}/api/fares?trainNo=${encodeURIComponent(trainNo)}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&date=${encodeURIComponent(date || '')}&class=${encodeURIComponent(cls)}&quota=${encodeURIComponent(quota || 'GN')}`);
     const data = await res.json();
@@ -1842,9 +1845,9 @@ const RailwayLiveStatusService = {
     const cleanDate = date || (typeof NTESLiveStatusProvider !== 'undefined' ? NTESLiveStatusProvider.getTodayISTDateString() : new Date().toISOString().split('T')[0]);
 
     // 1. Query live telemetry backend with automatic GitHub Pages / local / Vercel detection
-    const isGitHubPages = typeof window !== 'undefined' && window.location.hostname.includes('github.io');
-    const API_BASE = isGitHubPages ? (window.BHARATRAIL_API_URL || 'https://bharatrail-live-telemetry.onrender.com') : '';
+    const API_BASE = BHARATRAIL_API_CONFIG.getApiBaseUrl();
     const endpoint = `${API_BASE}/api/live-status?trainNo=${encodeURIComponent(cleanNum)}&date=${encodeURIComponent(cleanDate)}`;
+
 
     let networkError = null;
     let httpStatusCode = null;
