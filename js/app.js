@@ -1767,7 +1767,7 @@ function renderTrainDetail(query) {
 const BHARATRAIL_API_CONFIG = {
   // Production backend: Vercel serverless (api/ folder deployed alongside repo)
   // Override by setting window.BHARATRAIL_API_URL or localStorage key 'bharatrail_live_api_url'
-  DEFAULT_PROD_URL: 'https://irctc-clone-dummy-website-2c9vkspyp.vercel.app',
+  DEFAULT_PROD_URL: 'https://irctc-clone-dummy-website-9p86.vercel.app',
 
   getApiBaseUrl() {
     if (typeof window !== 'undefined') {
