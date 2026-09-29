@@ -2119,10 +2119,14 @@ function initLiveStatusPage() {
           </div>
 
           <div style="text-align:right;">
-            <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+            <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px; flex-wrap:wrap;">
               <span class="avl-status-tag ${statusClass}" style="font-size:12px; padding:6px 14px; font-weight:800; letter-spacing:0.02em;">
                 ${statusLabel}
               </span>
+              <a href="https://enquiry.indianrail.gov.in/mntes/q?opt=TrainRunning&subOpt=fullR&trainNo=${data.trainNumber}&jDate=${(data.journeyDate || cleanD).split('-').reverse().join('-')}" target="_blank" rel="noopener" style="padding:5px 10px; font-size:11px; display:inline-flex; align-items:center; gap:4px; background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; border-radius:var(--radius-sm); font-weight:700; text-decoration:none; cursor:pointer;" title="View real-time live status on official NTES website">
+                <i data-lucide="external-link" style="width:12px;height:12px;"></i>
+                <span>Live on NTES</span>
+              </a>
               <button id="liveManualRefreshBtn" type="button" class="btn-signin" style="padding:5px 10px; font-size:11px; display:inline-flex; align-items:center; gap:4px; background:#FFFFFF; cursor:pointer;" title="Refresh live telemetry from NTES">
                 <i data-lucide="refresh-cw" style="width:12px;height:12px;"></i>
                 <span>Refresh</span>
