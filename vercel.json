@@ -1,11 +1,16 @@
 {
   "version": 2,
-  "rewrites": [
-    { "source": "/api/live-status", "destination": "/api/live-status.js" },
-    { "source": "/api/trains/:train/live-status", "destination": "/api/live-status.js?trainNo=:train" },
-    { "source": "/api/trains/live-status", "destination": "/api/live-status.js" },
-    { "source": "/api/fares", "destination": "/api/fares.js" },
-    { "source": "/api/trains/:train/fares", "destination": "/api/fares.js?train=:train" },
-    { "source": "/api/health", "destination": "/api/health.js" }
+  "builds": [
+    { "src": "api/*.js", "use": "@vercel/node" },
+    { "src": "*.html", "use": "@vercel/static" },
+    { "src": "js/**", "use": "@vercel/static" },
+    { "src": "css/**", "use": "@vercel/static" },
+    { "src": "images/**", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/live-status", "dest": "/api/live-status.js" },
+    { "src": "/api/fares", "dest": "/api/fares.js" },
+    { "src": "/api/health", "dest": "/api/health.js" },
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }
