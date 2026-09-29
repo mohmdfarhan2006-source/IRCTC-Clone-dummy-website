@@ -72,16 +72,16 @@ function fetchNTES(trainNo, startDay) {
 
 // ─── Build scheduled fallback from data.js ───────────────────────────────────
 function buildScheduledFallback(train, dateStr) {
-  const stoppages = train.stoppages || [];
-  const stations = stoppages.map((stn, i) => ({
-    sequence: i + 1,
-    name: stn.name || stn.station || `Station ${i + 1}`,
+  const route = train.route || train.stoppages || train.stops || train.stations || [];
+  const stations = route.map((stn, i) => ({
+    sequence: stn.sequence || i + 1,
+    name: stn.name || `Station ${i + 1}`,
     code: stn.code || '',
     platform: stn.platform || '1',
     distance: stn.distance || 0,
     day: stn.day || 1,
-    scheduledArrival: i === 0 ? 'Source' : (stn.arrival || '--:--'),
-    scheduledDeparture: i === stoppages.length - 1 ? 'Destination' : (stn.departure || '--:--'),
+    scheduledArrival: (stn.arrival === 'None' || !stn.arrival) ? 'Source' : stn.arrival,
+    scheduledDeparture: (stn.departure === 'None' || !stn.departure) ? 'Destination' : stn.departure,
     actualArrival: '--:--',
     actualDeparture: '--:--',
     arrivalDelay: 0,
