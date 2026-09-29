@@ -58,6 +58,12 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (pathname === '/api/live-status') {
+    const liveStatusHandler = require('./api/live-status.js');
+    await liveStatusHandler(req, res);
+    return;
+  }
+
   // ==========================================================================
   // OFFICIAL NTES LIVE STATUS API ENDPOINTS
   // ==========================================================================
@@ -69,7 +75,7 @@ const server = http.createServer(async (req, res) => {
   if (liveMatch) {
     requestedTrainNumber = liveMatch[1].trim();
   } else if (pathname === '/api/trains/live-status') {
-    requestedTrainNumber = (reqUrl.searchParams.get('train') || '').trim();
+    requestedTrainNumber = (reqUrl.searchParams.get('trainNo') || reqUrl.searchParams.get('train') || '').trim();
   }
 
   if (requestedTrainNumber) {
@@ -116,6 +122,12 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (pathname === '/api/fares') {
+    const faresHandler = require('./api/fares.js');
+    await faresHandler(req, res);
+    return;
+  }
+
   // ==========================================================================
   // OFFICIAL RAILWAY FARE & TARIFF API ENDPOINTS (IRCA TARIFF NO. 26 / IRCTC PRS)
   // ==========================================================================
@@ -126,8 +138,6 @@ const server = http.createServer(async (req, res) => {
 
   if (fareTrainMatch) {
     fareQueryTrainNumber = fareTrainMatch[1].trim();
-  } else if (pathname === '/api/fares') {
-    fareQueryTrainNumber = (reqUrl.searchParams.get('trainNumber') || reqUrl.searchParams.get('train') || '').trim();
   }
 
   if (fareQueryTrainNumber) {

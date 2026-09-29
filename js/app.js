@@ -931,6 +931,18 @@ function initBookingPage() {
       }
     }
 
+    if (typeof getFare === 'function') {
+      getFare(train.number, fromCode, toCode, journeyDate, clsCode, quotaCode).then(liveFare => {
+        if (liveFare && liveFare.totalFare && currentBookingState) {
+          if (liveFare.totalFare !== currentBookingState.perPaxFare) {
+            currentBookingState.perPaxFare = liveFare.totalFare;
+            currentBookingState.baseFare = liveFare.baseFare || currentBookingState.baseFare;
+            updateFareSummary();
+          }
+        }
+      }).catch(() => {});
+    }
+
     if (!currentBookingState.fareBreakdown) {
       const fromEq = getEquivalentStationCodes(currentBookingState.fromCode);
       const toEq = getEquivalentStationCodes(currentBookingState.toCode);
@@ -1780,15 +1792,59 @@ const BHARATRAIL_API_CONFIG = {
   }
 };
 
+// ==========================================================================
+// HYBRID IRCTC FARE SERVICE (CHANGE 2)
+// ==========================================================================
+async function getFare(trainNo, from, to, date, cls, quota) {
+  const isGitHubPages = typeof window !== 'undefined' && window.location.hostname.includes('github.io');
+  const API_BASE = isGitHubPages ? (window.BHARATRAIL_API_URL || 'https://bharatrail-live-telemetry.onrender.com') : '';
+  try {
+    const res = await fetch(`${API_BASE}/api/fares?trainNo=${encodeURIComponent(trainNo)}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&date=${encodeURIComponent(date || '')}&class=${encodeURIComponent(cls)}&quota=${encodeURIComponent(quota || 'GN')}`);
+    const data = await res.json();
+    if (data && data.source === 'irctc' && data.fare) return data.fare;
+  } catch (e) {}
+
+  // Fallback: always use the local fare engine if IRCTC is unavailable
+  if (typeof RailwayFareEngine !== 'undefined') {
+    const train = (typeof BHARAT_TRAINS !== 'undefined' && Array.isArray(BHARAT_TRAINS))
+      ? BHARAT_TRAINS.find(t => t.number === String(trainNo) || t.number.toLowerCase() === String(trainNo).toLowerCase())
+      : null;
+    if (train) {
+      const jRes = RailwayFareEngine.calculateJourneyFare(train, from, to, cls, quota || 'GN', date);
+      if (jRes && jRes.success) {
+        return {
+          baseFare: jRes.breakdown.baseFare,
+          reservationCharge: jRes.breakdown.reservationFee,
+          superfastCharge: jRes.breakdown.superfastCharge,
+          gst: jRes.breakdown.gst,
+          totalFare: jRes.totalFare
+        };
+      }
+    }
+  }
+  return {
+    baseFare: 470,
+    reservationCharge: 20,
+    superfastCharge: 30,
+    gst: 0,
+    totalFare: 520
+  };
+}
+
+if (typeof window !== 'undefined') {
+  window.getFare = getFare;
+}
+
 const RailwayLiveStatusService = {
   async fetchLiveStatus(trainNumber, date) {
     if (!trainNumber) return null;
     const cleanNum = trainNumber.trim();
     const cleanDate = date || (typeof NTESLiveStatusProvider !== 'undefined' ? NTESLiveStatusProvider.getTodayISTDateString() : new Date().toISOString().split('T')[0]);
 
-    // 1. Query live telemetry backend
-    const baseUrl = BHARATRAIL_API_CONFIG.getApiBaseUrl();
-    const endpoint = `${baseUrl}/api/trains/${encodeURIComponent(cleanNum)}/live-status?date=${encodeURIComponent(cleanDate)}`;
+    // 1. Query live telemetry backend with automatic GitHub Pages / local / Vercel detection
+    const isGitHubPages = typeof window !== 'undefined' && window.location.hostname.includes('github.io');
+    const API_BASE = isGitHubPages ? (window.BHARATRAIL_API_URL || 'https://bharatrail-live-telemetry.onrender.com') : '';
+    const endpoint = `${API_BASE}/api/live-status?trainNo=${encodeURIComponent(cleanNum)}&date=${encodeURIComponent(cleanDate)}`;
 
     let networkError = null;
     let httpStatusCode = null;
@@ -1804,7 +1860,9 @@ const RailwayLiveStatusService = {
       httpStatusCode = resp.status;
       if (resp.ok) {
         const data = await resp.json();
-        return data;
+        if (data && data.status !== 'unavailable') {
+          return data;
+        }
       } else {
         networkError = `Gateway returned HTTP ${resp.status} ${resp.statusText || ''}`.trim();
       }
@@ -1812,14 +1870,12 @@ const RailwayLiveStatusService = {
       networkError = (e && e.name === 'AbortError') ? 'Connection timed out after 12s' : (e.message || 'Network connection failed');
     }
 
-    // 2. If running locally with Node provider available in memory:
-    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-      if (typeof NTESLiveStatusProvider !== 'undefined' && typeof NTESLiveStatusProvider.getLiveStatus === 'function') {
-        try {
-          const localData = await NTESLiveStatusProvider.getLiveStatus(cleanNum, cleanDate);
-          if (localData) return localData;
-        } catch (e) {}
-      }
+    // 2. If running locally or provider available in memory:
+    if (typeof NTESLiveStatusProvider !== 'undefined' && typeof NTESLiveStatusProvider.getLiveStatus === 'function') {
+      try {
+        const localData = await NTESLiveStatusProvider.getLiveStatus(cleanNum, cleanDate);
+        if (localData && localData.status !== 'UNAVAILABLE' && !localData.error) return localData;
+      } catch (e) {}
     }
 
     const staticTrain = (typeof BHARAT_TRAINS !== 'undefined')
